@@ -15,6 +15,9 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
+	//initialize the server in goroutine
+	go Start()
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "wtg_desktop",
