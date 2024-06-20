@@ -31,6 +31,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
+		DisableResize: false,
 	})
 
 	if err != nil {
