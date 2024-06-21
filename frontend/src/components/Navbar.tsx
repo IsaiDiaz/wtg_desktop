@@ -1,19 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {FaHome, FaInfo, FaEnvelope} from "react-icons/fa";
 
 const Navbar = () => {
-  return (
-    <div style={{ width: '200px', height: '100vh', backgroundColor: '#f0f0f0', padding: '10px' }}>
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
-        <li>
-          <Link to="/home">Home</Link>
-        </li>
-        <li>
-          <Link to="/hello">Hello</Link>
-        </li>
-      </ul>
-    </div>
-  );
+    return (
+        <div id="navbar">
+            <div id="navbar_list">
+                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                    <li className="navbar_list_item">
+                        <Link to="/home" className="navbar_list_item_link"><FaHome/>Home</Link>
+                    </li>
+                    <li className="navbar_list_item">
+
+                        <Link to="/hello" className="navbar_list_item_link">Hello</Link>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    );
 }
 
 export default Navbar;

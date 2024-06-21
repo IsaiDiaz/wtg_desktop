@@ -7,7 +7,39 @@ body {
     font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
+    background-color: #ddddddc2;
 }
+
+#navbar{
+    position: fixed;
+    height: 100vh;
+    width: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#navbar_list{
+    background-color: white;
+    padding: 8px;
+    height: 95%;
+    width: 85%;
+    border-radius: 15px;
+}
+
+.navbar_list_item{
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: green;
+}
+
+.navbar_list_item_link{
+    text-decoration: none;
+    color: black;
+}
+
 
 @font-face {
     font-family: "Nunito";
