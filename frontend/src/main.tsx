@@ -3,6 +3,7 @@ import {createRoot} from 'react-dom/client'
 import './style.css'
 import {
     createBrowserRouter,
+    Navigate,
     RouterProvider,
 } from "react-router-dom"
 import App from './pages/App/App'
@@ -15,11 +16,15 @@ const router = createBrowserRouter([
         element: <App />,
         children: [
             {
-                path: '/hello',
+                index: true,
+                element: <Navigate to="/home" />
+            },
+            {
+                path: 'hello',
                 element: <Hello />
             },
             {
-                path: '/home',
+                path: 'home',
                 element: <Home/>
             }
         ]
