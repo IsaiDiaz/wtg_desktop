@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+type User struct {
+	ID   uint `gorm:"primaryKey"`
+	Name string
+	Age  int
+}
+
 // App struct
 type App struct {
 	ctx context.Context
