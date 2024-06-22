@@ -26,3 +26,12 @@ func ObtenerTarjetaRFIDPorID(id uint) Response {
 
 	return Response{Codigo: 200, Mensaje: "Tarjeta obtenida correctamente", Data: tarjeta}
 }
+
+func ObtenerTodasTarjetasRFID() Response {
+	tarjetas, err := db.ObtenerTodasTarjetasRFID()
+	if err != nil {
+		return Response{Codigo: 400, Mensaje: "Error al obtener las tarjetas", Data: err.Error()}
+	}
+
+	return Response{Codigo: 200, Mensaje: "Tarjetas obtenidas correctamente", Data: tarjetas}
+}

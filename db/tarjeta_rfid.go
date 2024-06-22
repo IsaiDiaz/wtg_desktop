@@ -21,3 +21,12 @@ func ObtenerTarjetaRFIDPorUID(uid string) (*Tarjeta, error) {
 	}
 	return &tarjeta, nil
 }
+
+func ObtenerTodasTarjetasRFID() ([]Tarjeta, error) {
+	var tarjetas []Tarjeta
+	err := DB.Find(&tarjetas).Error
+	if err != nil {
+		return nil, err
+	}
+	return tarjetas, nil
+}

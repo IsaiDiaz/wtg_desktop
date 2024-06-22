@@ -12,6 +12,7 @@ import (
 func registrarTarjetaApi(router *gin.Engine) {
 	router.POST("/tarjeta", crearTarjetaRFID)
 	router.GET("/tarjeta/:id", obtenerTarjetaRFIDPorID)
+	router.GET("/tarjeta", obtenerTodasTarjetasRFID)
 }
 
 func crearTarjetaRFID(c *gin.Context) {
@@ -38,6 +39,17 @@ func obtenerTarjetaRFIDPorID(c *gin.Context) {
 	}
 
 	response := bl.ObtenerTarjetaRFIDPorID(uint(id))
+
+	if response.Codigo == 400 {
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func obtenerTodasTarjetasRFID(c *gin.Context) {
+	response := bl.ObtenerTodasTarjetasRFID()
 
 	if response.Codigo == 400 {
 		c.JSON(http.StatusBadRequest, response)

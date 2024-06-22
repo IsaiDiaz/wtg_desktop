@@ -9,7 +9,7 @@ import (
 func Start() {
 	router := gin.Default()
 	registrarTarjetaApi(router)
-
+	registrarEmpleadoApi(router)
 	log.Fatal(router.Run(":8080"))
 
 }
