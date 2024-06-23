@@ -14,6 +14,7 @@ func registrarEmpleadoApi(router *gin.Engine) {
 	router.GET("/empleado/:empid", obtenerEmpleadoPorID)
 	router.POST("/empleado/:empid/tarjeta/:tarid", asignarTarjetaEmpleado)
 	router.GET("/empleado/:empid/tarjeta", obtenerTarjetaEmpleado)
+	router.GET("/empleado", obtenerTodosEmpleados)
 }
 
 func crearEmpleado(c *gin.Context) {
@@ -62,12 +63,7 @@ func asignarTarjetaEmpleado(c *gin.Context) {
 		return
 	}
 
-	empleadoTarjeta := db.EmpleadoTarjeta{
-		EmpleadoID: uint(empid),
-		TarjetaID:  uint(tarid),
-	}
-
-	response := bl.AsignarTarjetaEmpleado(&empleadoTarjeta)
+	response := bl.AsignarTarjetaEmpleado(uint(empid), uint(tarid))
 
 	if response.Codigo == 400 {
 		c.JSON(http.StatusBadRequest, response)
@@ -85,6 +81,17 @@ func obtenerTarjetaEmpleado(c *gin.Context) {
 	}
 
 	response := bl.ObtenerTarjetaEmpleado(uint(empid))
+
+	if response.Codigo == 400 {
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func obtenerTodosEmpleados(c *gin.Context) {
+	response := bl.ObtenerTodosEmpleados()
 
 	if response.Codigo == 400 {
 		c.JSON(http.StatusBadRequest, response)

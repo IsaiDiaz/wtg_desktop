@@ -21,19 +21,28 @@ func ObtenerEmpleadoPorID(id uint) Response {
 	return Response{Codigo: 200, Mensaje: "Empleado obtenido correctamente", Data: empleado}
 }
 
-func AsignarTarjetaEmpleado(empleadoTarjeta *db.EmpleadoTarjeta) Response {
-	if err := db.AsignarTarjetaEmpleado(empleadoTarjeta); err != nil {
+func ObtenerTodosEmpleados() Response {
+	empleados, err := db.ObtenerTodosEmpleados()
+	if err != nil {
+		return Response{Codigo: 400, Mensaje: "Error al obtener los empleados", Data: err.Error()}
+	}
+
+	return Response{Codigo: 200, Mensaje: "Empleados obtenidos correctamente", Data: empleados}
+}
+
+func AsignarTarjetaEmpleado(empid uint, tarid uint) Response {
+	if err := db.AsignarTarjetaEmpleado(empid, tarid); err != nil {
 		return Response{Codigo: 400, Mensaje: "Error al asignar la tarjeta al empleado", Data: err.Error()}
 	}
 
-	return Response{Codigo: 200, Mensaje: "Tarjeta asignada correctamente", Data: empleadoTarjeta}
+	return Response{Codigo: 200, Mensaje: "Tarjeta asignada correctamente"}
 }
 
 func ObtenerTarjetaEmpleado(empid uint) Response {
-	empleadoTarjeta, err := db.ObtenerTarjetaEmpleado(empid)
+	empleado, err := db.ObtenerTarjetaEmpleado(empid)
 	if err != nil {
 		return Response{Codigo: 400, Mensaje: "Error al obtener la tarjeta del empleado", Data: err.Error()}
 	}
 
-	return Response{Codigo: 200, Mensaje: "Tarjeta obtenida correctamente", Data: empleadoTarjeta}
+	return Response{Codigo: 200, Mensaje: "Tarjeta obtenida correctamente", Data: empleado}
 }

@@ -6,27 +6,43 @@ func CrearEmpleado(empleado *Empleado) error {
 
 func ObtenerEmpleadoPorID(id uint) (*Empleado, error) {
 	var empleado Empleado
-	err := DB.First(&empleado, id).Error
+	err := DB.Model(&Empleado{}).Preload("Tarjeta").Where("empleado_id = ?", id).First(&empleado).Error
 	if err != nil {
 		return nil, err
 	}
 	return &empleado, nil
 }
 
-func AsignarTarjetaEmpleado(empleadoTarjeta *EmpleadoTarjeta) error {
-	return DB.Create(empleadoTarjeta).Error
+func ObtenerTodosEmpleados() ([]Empleado, error) {
+	var empleados []Empleado
+	err := DB.Model(&Empleado{}).Preload("Tarjeta").Find(&empleados).Error
+	if err != nil {
+		return nil, err
+	}
+	return empleados, nil
 }
 
-func ObtenerTarjetaEmpleado(empid uint) (*Tarjeta, error) {
-	var empleadoTarjeta EmpleadoTarjeta
-	err := DB.Where("empleado_id = ?", empid).First(&empleadoTarjeta).Error
-	if err != nil {
-		return nil, err
-	}
+func AsignarTarjetaEmpleado(empid uint, tarid uint) error {
+	var empleado Empleado
 	var tarjeta Tarjeta
-	err = DB.First(&tarjeta, empleadoTarjeta.TarjetaID).Error
+	err := DB.First(&empleado, empid).Error
+	if err != nil {
+		return err
+	}
+	err = DB.First(&tarjeta, tarid).Error
+	if err != nil {
+		return err
+	}
+
+	empleado.Tarjeta = tarjeta
+	return DB.Save(&empleado).Error
+}
+
+func ObtenerTarjetaEmpleado(empid uint) (*Empleado, error) {
+	var empleado Empleado
+	err := DB.Model(&Empleado{}).Preload("Tarjeta").Where("empleado_id = ?", empid).First(&empleado).Error
 	if err != nil {
 		return nil, err
 	}
-	return &tarjeta, nil
+	return &empleado, nil
 }
