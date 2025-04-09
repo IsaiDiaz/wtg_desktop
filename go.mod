@@ -1,8 +1,6 @@
 module wtg_desktop
 
-go 1.22.0
-
-toolchain go1.22.3
+go 1.23
 
 require github.com/wailsapp/wails/v2 v2.10.1
 
@@ -35,4 +33,4 @@ require (
 	golang.org/x/text v0.22.0 // indirect
 )
 
-// replace github.com/wailsapp/wails/v2 v2.8.2 => /Users/josediaz/go/pkg/mod
+// replace github.com/wailsapp/wails/v2 v2.10.1 => /Users/josediaz/go/pkg/mod
