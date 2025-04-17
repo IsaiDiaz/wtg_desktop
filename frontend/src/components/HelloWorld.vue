@@ -1,71 +1,87 @@
 <script lang="ts" setup>
-import {reactive} from 'vue'
-import {Greet} from '../../wailsjs/go/main/App'
+import { reactive } from 'vue'
+import { CreateEmployee } from '../../wailsjs/go/desktop/EmployeeHandler'
+import { employee } from '../../wailsjs/go/models'
 
-const data = reactive({
-  name: "",
-  resultText: "Please enter your name below 👇",
+const {Employee} = employee
+
+const form = reactive({
+  name: "Juan Pérez",
+  ci: "12345678",
+  birth_date: new Date().toISOString(),
+  start_date: new Date().toISOString(),
+  photo_url: "https://placehold.co/200x200",
+  auth: 1,
+  category_id: 1,
+  email: "juan@example.com",
 })
 
-function greet() {
-  Greet(data.name).then(result => {
-    data.resultText = result
-  })
-}
+const message = reactive({
+  status: "",
+})
 
+async function create() {
+  try {
+    const emp = new Employee({
+      id: 0, 
+      name: form.name,
+      ci: form.ci,
+      birth_date: form.birth_date,
+      start_date: form.start_date,
+      photo_url: form.photo_url,
+      auth: form.auth,
+      category_id: form.category_id,
+      email: form.email,
+    })
+
+    await CreateEmployee(emp)
+    message.status = "✅ Empleado creado exitosamente"
+  } catch (error) {
+    message.status = "❌ Error al crear: " + error
+  }
+}
 </script>
 
 <template>
   <main>
-    <div id="result" class="result">{{ data.resultText }}</div>
-    <div id="input" class="input-box">
-      <input id="name" v-model="data.name" autocomplete="off" class="input" type="text"/>
-      <button class="btn" @click="greet">Greet</button>
+    <div id="form" class="input-box">
+      <input v-model="form.name" placeholder="Nombre" class="input" />
+      <input v-model="form.ci" placeholder="CI" class="input" />
+      <input v-model="form.email" placeholder="Email" class="input" />
+      <button class="btn" @click="create">Crear empleado</button>
     </div>
+    <div class="result">{{ message.status }}</div>
   </main>
 </template>
 
 <style scoped>
 .result {
-  height: 20px;
-  line-height: 20px;
-  margin: 1.5rem auto;
+  margin-top: 1rem;
+  color: green;
+}
+
+.input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .input-box .btn {
-  width: 60px;
-  height: 30px;
-  line-height: 30px;
-  border-radius: 3px;
+  width: 160px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 6px;
   border: none;
-  margin: 0 0 0 20px;
   padding: 0 8px;
   cursor: pointer;
-}
-
-.input-box .btn:hover {
-  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-  color: #333333;
+  background-color: #007bff;
+  color: white;
 }
 
 .input-box .input {
-  border: none;
-  border-radius: 3px;
-  outline: none;
-  height: 30px;
-  line-height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 36px;
   padding: 0 10px;
-  background-color: rgba(240, 240, 240, 1);
-  -webkit-font-smoothing: antialiased;
-}
-
-.input-box .input:hover {
-  border: none;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.input-box .input:focus {
-  border: none;
-  background-color: rgba(255, 255, 255, 1);
 }
 </style>

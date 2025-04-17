@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"wtg_desktop/internal/domain/employee"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 // App struct
@@ -24,4 +28,16 @@ func (a *App) startup(ctx context.Context) {
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func setupDatabase() *gorm.DB {
+	db, err := gorm.Open(sqlite.Open("wtg.db"), &gorm.Config{})
+
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	db.AutoMigrate(&employee.Employee{})
+
+	return db
 }
