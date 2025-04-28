@@ -1,9 +1,16 @@
 <script lang="ts" setup>
-import HelloWorld from './components/HelloWorld.vue'</script>
+import Sidebar  from './components/Sidebar.vue'
+</script>
 
 <template>
-  <img id="logo" alt="Wails logo" src="./assets/images/logo-universal.png"/>
-  <HelloWorld/>
+  <div class="flex">
+    <Sidebar />
+    <div class="flex-1 ml-15rem p-4">
+      <router-view />
+    </div>
+  </div>
+  <!-- <router-view /> -->
+  <!-- <HelloWorld/> -->
 </template>
 
 <style>
