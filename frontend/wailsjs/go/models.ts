@@ -138,3 +138,48 @@ export namespace rfidcard {
 
 }
 
+export namespace rfidcardhistory {
+	
+	export class RfidCardHistory {
+	    id: number;
+	    // Go type: time
+	    assigned_at: any;
+	    // Go type: time
+	    unassigned_at: any;
+	    employee_id: number;
+	    rfid_card_id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RfidCardHistory(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.assigned_at = this.convertValues(source["assigned_at"], null);
+	        this.unassigned_at = this.convertValues(source["unassigned_at"], null);
+	        this.employee_id = source["employee_id"];
+	        this.rfid_card_id = source["rfid_card_id"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+

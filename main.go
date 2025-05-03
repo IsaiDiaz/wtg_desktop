@@ -36,6 +36,7 @@ func main() {
 			container.CategoryHandler,
 			container.DeviceHandler,
 			container.RFIDCardHandler,
+			container.RFIDCardHistoryHandler,
 		},
 	})
 
