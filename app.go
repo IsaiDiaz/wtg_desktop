@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"wtg_desktop/internal/domain/category"
+	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
 
 	"gorm.io/driver/sqlite"
@@ -31,7 +33,11 @@ func SetupDatabase() *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&employee.Employee{})
+	db.AutoMigrate(
+		&employee.Employee{},
+		&category.Category{},
+		&device.Device{},
+	)
 
 	return db
 }

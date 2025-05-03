@@ -5,12 +5,14 @@ import (
 
 	"wtg_desktop/internal/api/desktop"
 	"wtg_desktop/internal/domain/category"
+	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
 )
 
 type AppContainer struct {
 	EmployeeHandler *desktop.EmployeeHandler
 	CategoryHandler *desktop.CategoryHandler
+	DeviceHandler   *desktop.DeviceHandler
 }
 
 func InitAppContainer(db *gorm.DB) *AppContainer {
@@ -24,8 +26,14 @@ func InitAppContainer(db *gorm.DB) *AppContainer {
 	categoryService := category.NewService(categoryRepo)
 	categoryHandler := desktop.NewCategoryHandler(categoryService)
 
+	// --- Device wiring ---
+	deviceRepo := device.NewRepository(db)
+	deviceService := device.NewService(deviceRepo)
+	deviceHandler := desktop.NewDeviceHandler(deviceService)
+
 	return &AppContainer{
 		EmployeeHandler: employeeHandler,
 		CategoryHandler: categoryHandler,
+		DeviceHandler:   deviceHandler,
 	}
 }

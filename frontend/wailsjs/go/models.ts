@@ -19,6 +19,27 @@ export namespace category {
 
 }
 
+export namespace device {
+	
+	export class Device {
+	    id: number;
+	    uuid: string;
+	    employee_id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Device(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.uuid = source["uuid"];
+	        this.employee_id = source["employee_id"];
+	    }
+	}
+
+}
+
 export namespace employee {
 	
 	export class Employee {

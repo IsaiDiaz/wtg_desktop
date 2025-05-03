@@ -34,6 +34,7 @@ func main() {
 			app,
 			container.EmployeeHandler,
 			container.CategoryHandler,
+			container.DeviceHandler,
 		},
 	})
 
