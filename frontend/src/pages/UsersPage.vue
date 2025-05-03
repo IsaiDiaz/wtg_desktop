@@ -14,7 +14,7 @@
         <i class="pi pi-users mr-1 text-2xl"></i>
         Usuarios
       </div>
-      <DataTable :value="users" tableStyle="min-width: 50rem">
+      <DataTable :value="users" tableStyle="min-width: 50rem" @row-click="goToUserInfoPage">
         <Column field="ci" header="CI"></Column>
         <Column field="name" header="Nombre"></Column>
         <Column field="email" header="Correo electrónico"></Column>
@@ -31,6 +31,9 @@ import { ref, reactive } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button';
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const users = ref([
   {
@@ -74,6 +77,11 @@ const users = ref([
     phone: '555-1415'
   }
 ]);
+
+function goToUserInfoPage(event: any) {
+  const clientId = event.data.id;
+  router.push({ path: `/users/${clientId}` });
+}
 </script>
 
 <style>
