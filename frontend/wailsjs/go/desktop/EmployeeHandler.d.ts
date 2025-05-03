@@ -5,4 +5,12 @@ import {context} from '../models';
 
 export function CreateEmployee(arg1:employee.Employee):Promise<void>;
 
+export function DeleteEmployee(arg1:number):Promise<void>;
+
+export function GetAllEmployees():Promise<Array<employee.Employee>>;
+
+export function GetEmployeeByID(arg1:number):Promise<employee.Employee>;
+
+export function UpdateEmployee(arg1:employee.Employee):Promise<void>;
+
 export function WailsInit(arg1:context.Context):Promise<void>;

@@ -6,6 +6,22 @@ export function CreateEmployee(arg1) {
   return window['go']['desktop']['EmployeeHandler']['CreateEmployee'](arg1);
 }
 
+export function DeleteEmployee(arg1) {
+  return window['go']['desktop']['EmployeeHandler']['DeleteEmployee'](arg1);
+}
+
+export function GetAllEmployees() {
+  return window['go']['desktop']['EmployeeHandler']['GetAllEmployees']();
+}
+
+export function GetEmployeeByID(arg1) {
+  return window['go']['desktop']['EmployeeHandler']['GetEmployeeByID'](arg1);
+}
+
+export function UpdateEmployee(arg1) {
+  return window['go']['desktop']['EmployeeHandler']['UpdateEmployee'](arg1);
+}
+
 export function WailsInit(arg1) {
   return window['go']['desktop']['EmployeeHandler']['WailsInit'](arg1);
 }

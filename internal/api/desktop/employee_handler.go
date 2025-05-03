@@ -21,3 +21,19 @@ func (e *EmployeeHandler) WailsInit(ctx context.Context) {
 func (e *EmployeeHandler) CreateEmployee(emp *employee.Employee) error {
 	return e.service.CreateEmployee(emp)
 }
+
+func (e *EmployeeHandler) GetEmployeeByID(id int) (*employee.Employee, error) {
+	return e.service.GetEmployeeByID(id)
+}
+
+func (e *EmployeeHandler) GetAllEmployees() ([]*employee.Employee, error) {
+	return e.service.GetAllEmployees()
+}
+
+func (e *EmployeeHandler) UpdateEmployee(emp *employee.Employee) error {
+	return e.service.UpdateEmployee(emp)
+}
+
+func (e *EmployeeHandler) DeleteEmployee(id int) error {
+	return e.service.DeleteEmployee(id)
+}

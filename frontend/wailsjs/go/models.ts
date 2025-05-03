@@ -1,17 +1,38 @@
+export namespace category {
+	
+	export class Category {
+	    id: number;
+	    name: string;
+	    payment: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Category(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.payment = source["payment"];
+	    }
+	}
+
+}
+
 export namespace employee {
 	
 	export class Employee {
-	    id: number;
-	    name: string;
-	    ci: string;
+	    ID: number;
+	    Name: string;
+	    CI: string;
 	    // Go type: time
-	    birth_date: any;
+	    BirthDate: any;
 	    // Go type: time
-	    start_date: any;
-	    photo_url: string;
-	    auth: number;
-	    category_id: number;
-	    email: string;
+	    StartDate: any;
+	    PhotoURL: string;
+	    Auth: number;
+	    CategoryID: number;
+	    Email: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Employee(source);
@@ -19,15 +40,15 @@ export namespace employee {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.name = source["name"];
-	        this.ci = source["ci"];
-	        this.birth_date = this.convertValues(source["birth_date"], null);
-	        this.start_date = this.convertValues(source["start_date"], null);
-	        this.photo_url = source["photo_url"];
-	        this.auth = source["auth"];
-	        this.category_id = source["category_id"];
-	        this.email = source["email"];
+	        this.ID = source["ID"];
+	        this.Name = source["Name"];
+	        this.CI = source["CI"];
+	        this.BirthDate = this.convertValues(source["BirthDate"], null);
+	        this.StartDate = this.convertValues(source["StartDate"], null);
+	        this.PhotoURL = source["PhotoURL"];
+	        this.Auth = source["Auth"];
+	        this.CategoryID = source["CategoryID"];
+	        this.Email = source["Email"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
