@@ -5,6 +5,7 @@ import (
 	"wtg_desktop/internal/domain/category"
 	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
+	"wtg_desktop/internal/domain/rfidcard"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -37,6 +38,7 @@ func SetupDatabase() *gorm.DB {
 		&employee.Employee{},
 		&category.Category{},
 		&device.Device{},
+		&rfidcard.RfidCard{},
 	)
 
 	return db
