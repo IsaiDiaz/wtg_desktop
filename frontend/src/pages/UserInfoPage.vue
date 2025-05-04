@@ -13,27 +13,27 @@
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid mb-3">
-                    <div class="field col-12 md:col-6 text-left">
+                    <div class="field col-12 md:col-6">
                         <label>Carnet de identidad</label>
                         <div class="card-yellow">{{ user.ci }}</div>
                     </div>
-                    <div class="field col-12 md:col-6 text-left">
+                    <div class="field col-12 md:col-6">
                         <label>Teléfono</label>
                         <div class="card-yellow">{{ user.phone }}</div>
                     </div>
                 </div>
                 <div class="grid formgrid mb-3">
-                    <div class="field col-12 md:col-6 text-left">
+                    <div class="field col-12 md:col-6">
                         <label>Correo electrónico</label>
                         <div class="card-yellow">{{ user.email }}</div>
                     </div>
-                    <div class="field col-12 md:col-6 text-left">
+                    <div class="field col-12 md:col-6">
                         <label>Fecha de nacimiento</label>
                         <div class="card-yellow">{{ user.birth_date }}</div>
                     </div>
                 </div>
                 <div class="grid formgrid mb-3">
-                    <div class="field col-12 md:col-6 text-left">
+                    <div class="field col-12 md:col-6">
                         <label>Fecha de ingreso</label>
                         <div class="card-yellow">{{ user.start_date }}</div>
                     </div>
@@ -112,6 +112,7 @@
         name: 'Juan Luis Pérez Paredes',
         email: 'juan.perez@example.com',
         role: 'Administrador',
+        roleId: '1',
         phone: '555-1234',
         birth_date: '1990-01-01',
         start_date: '2020-01-01',
