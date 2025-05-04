@@ -1,29 +1,35 @@
 <template>
   <div class="card">
-    <div class="flex justify-content-end align-items-center mb-4">
+    <div class="flex justify-content-end align-items-center mb-2 font-bold">
       <!-- Botón Añadir Usuario -->
       <Button label="Añadir Usuario" icon="pi pi-plus"
-        style="background-color: #EFE627; color: #2F4858; border-radius: 5px;" class="p-button-text mr-2" />
+        style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;" class="p-button-text mr-2 font-bold" />
       <!-- Botón Eliminar -->
-      <Button icon="pi pi-trash" severity="danger" aria-label="Eliminar" />
+      <Button icon="pi pi-trash" severity="danger"  style="background-color: var(--error-color);" aria-label="Eliminar" />
     </div>
     <div class="p-3 bg-white border-round shadow-2"
       style="position: relative;">
-      <div class="flex align-items-center justify-content-center py-3 px-5 text-xl font-bold"
-        style="position: absolute; top: -60px; left: 0px; background-color: #2A5C9F; color: white; border-top-left-radius: 20px; border-top-right-radius: 20px; ">
-        <i class="pi pi-users mr-1 text-2xl"></i>
+      <div class="flex align-items-center justify-content-center gap-2 py-2 px-3 text-lg font-bold"
+        style="position: absolute; top: -46px; left: 0px; background-color: #2A5C9F; color: white; border-top-left-radius: 20px; border-top-right-radius: 20px; ">
+        <img src="../assets/images/user-icon-white.svg" width="30"></img>
         Usuarios
       </div>
-      <DataTable :value="users" tableStyle="min-width: 50rem" @row-click="goToUserInfoPage">
+      <DataTable v-model:selection="selectedUsers" :value="users" dataKey="id" tableStyle="min-width: 50rem" @row-click="goToUserInfoPage">
+        <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
         <Column field="ci" header="CI"></Column>
         <Column field="name" header="Nombre"></Column>
         <Column field="email" header="Correo electrónico"></Column>
-        <Column field="role" header="Rol"></Column>
+        <Column header="Rol">
+          <template #body="slotProps">
+            <Tag :value="slotProps.data.role"
+            :severity="slotProps.data.role === 'Administrador' ? 'warn' : slotProps.data.role === 'Auditor' ? 'Success' : 'info'"></Tag>
+          </template>
+        </Column>
         <Column field="phone" header="Teléfono"></Column>
       </DataTable>
     </div>
   </div>
-</template>
+  </template>
 
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
@@ -31,6 +37,7 @@ import { ref, reactive } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button';
+import Tag from 'primevue/tag'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -49,7 +56,7 @@ const users = ref([
     ci: '87654321',
     name: 'María López',
     email: 'maria.lopez@example.com',
-    role: 'Usuario',
+    role: 'Empleado',
     phone: '555-5678'
   },
   {
@@ -57,7 +64,7 @@ const users = ref([
     ci: '11223344',
     name: 'Carlos García',
     email: 'carlos.garcia@example.com',
-    role: 'Moderador',
+    role: 'Auditor',
     phone: '555-9101'
   },
   {
@@ -65,7 +72,7 @@ const users = ref([
     ci: '44332211',
     name: 'Ana Torres',
     email: 'ana.torres@example.com',
-    role: 'Usuario',
+    role: 'Empleado',
     phone: '555-1213'
   },
   {
@@ -77,6 +84,7 @@ const users = ref([
     phone: '555-1415'
   }
 ]);
+const selectedUsers = ref();
 
 function goToUserInfoPage(event: any) {
   const clientId = event.data.id;

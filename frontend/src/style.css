@@ -1,3 +1,12 @@
+:root {
+    --primary-color: #EFE627;
+    --secondary-color: #2F4858;
+    --accent-color: #C9ADA7;
+    --background-color: #F8F8F6;
+    --text-color: #383838;
+    --error-color: #FF7777;
+    --success-color: #8BD480;
+}
 
 html {
     background-color: #F8F8F6;
@@ -23,5 +32,6 @@ body {
 
 #app {
     height: 100vh;
+    font-size: small;
     /*text-align: center;*/
 }
