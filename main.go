@@ -23,7 +23,7 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "wireless time guardian",
-		Width:  1024,
+		Width:  1200,
 		Height: 768,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
@@ -37,6 +37,7 @@ func main() {
 			container.DeviceHandler,
 			container.RFIDCardHandler,
 			container.RFIDCardHistoryHandler,
+			container.ProjectHandler,
 		},
 	})
 

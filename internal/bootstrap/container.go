@@ -7,6 +7,7 @@ import (
 	"wtg_desktop/internal/domain/category"
 	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
+	"wtg_desktop/internal/domain/project"
 	"wtg_desktop/internal/domain/rfidcard"
 	"wtg_desktop/internal/domain/rfidcardhistory"
 )
@@ -17,6 +18,7 @@ type AppContainer struct {
 	DeviceHandler          *desktop.DeviceHandler
 	RFIDCardHandler        *desktop.RfidCardHandler
 	RFIDCardHistoryHandler *desktop.RfidCardHistoryHandler
+	ProjectHandler         *desktop.ProjectHandler
 }
 
 func InitAppContainer(db *gorm.DB) *AppContainer {
@@ -45,11 +47,17 @@ func InitAppContainer(db *gorm.DB) *AppContainer {
 	rfidCardHistoryService := rfidcardhistory.NewService(rfidCardHistoryRepo)
 	rfidCardHistoryHandler := desktop.NewRfidCardHistoryHandler(rfidCardHistoryService)
 
+	// --- Project wiring ---
+	projectRepo := project.NewRepository(db)
+	projectService := project.NewService(projectRepo)
+	projectHandler := desktop.NewProjectHandler(projectService)
+
 	return &AppContainer{
 		EmployeeHandler:        employeeHandler,
 		CategoryHandler:        categoryHandler,
 		DeviceHandler:          deviceHandler,
 		RFIDCardHandler:        rfidCardHandler,
 		RFIDCardHistoryHandler: rfidCardHistoryHandler,
+		ProjectHandler:         projectHandler,
 	}
 }

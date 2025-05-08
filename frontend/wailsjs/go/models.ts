@@ -93,6 +93,55 @@ export namespace employee {
 
 }
 
+export namespace project {
+	
+	export class Project {
+	    ID: number;
+	    Name: string;
+	    // Go type: time
+	    InitialDate: any;
+	    // Go type: time
+	    FinalDate?: any;
+	    IsCurrent: boolean;
+	    Status: boolean;
+	    Description: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Project(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.Name = source["Name"];
+	        this.InitialDate = this.convertValues(source["InitialDate"], null);
+	        this.FinalDate = this.convertValues(source["FinalDate"], null);
+	        this.IsCurrent = source["IsCurrent"];
+	        this.Status = source["Status"];
+	        this.Description = source["Description"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace rfidcard {
 	
 	export class RfidCard {
