@@ -34,8 +34,8 @@
       </DataTable>
     </div>
     <!-- Dialog, eliminación -->
-    <ConfirmDialog :visible="isDialogVisible" :title="'Eliminación de Proyecto'"
-      :content="'Se enviará una solicitud al administrador del sistema para eliminar este Proyecto. El administrador revisará la solicitud y podrá aprobarla o rechazarla. Hasta que esto suceda, el Proyecto seguirá activo en el sistema. Te notificaremos cuando haya una respuesta.'"
+    <ConfirmDialog :visible="isDialogVisible" :title="'Eliminación de proyecto'"
+      :content="'Se enviará una solicitud al administrador del sistema para eliminar este proyecto. El administrador revisará la solicitud y podrá aprobarla o rechazarla. Hasta que esto suceda, el proyecto seguirá activo en el sistema. Te notificaremos cuando haya una respuesta.'"
       :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAccept"
       acceptIcon="pi pi-send"
       @update:visible="isDialogVisible = $event" />
