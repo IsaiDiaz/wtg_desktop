@@ -14,14 +14,14 @@
                         <InputText
                             id="name"
                             type="text"
-                            v-model="project.name"
+                            v-model="project.Name"
                             placeholder="Nombre del proyecto"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
 
                         <label for="description" class="mt-3">Descripcion</label>
                         <Textarea 
-                            v-model="project.description"
+                            v-model="project.Description"
                             id="description"
                             placeholder="Descripcion del proyecto" 
                             rows="5" 
@@ -32,7 +32,7 @@
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de inicio</label>
                         <Calendar 
-                            v-model="project.start_date"
+                            v-model="project.InitialDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
@@ -42,7 +42,7 @@
 
                         <label for="end_date" class="mt-3">Fecha de finalización</label>
                         <Calendar 
-                            v-model="project.end_date"
+                            v-model="project.FinalDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
@@ -90,7 +90,7 @@
                     severity="danger" @click="onCancel"/>
                 <Button label="Guardar" icon="pi pi-save" 
                     style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-                    class="p-button-text ml-4 mr-2 font-bold" @click="showDialogEdit"/>
+                    class="p-button-text ml-4 mr-2 font-bold" @click="save"/>
             </div>
         </div>
     </div>
@@ -107,10 +107,22 @@
     import { useRouter } from 'vue-router';
     import MultiSelect from 'primevue/multiselect';
     import AutoComplete from 'primevue/autocomplete';
+    import { CreateProject } from '../../../wailsjs/go/desktop/ProjectHandler';
+    import { project } from '../../../wailsjs/go/models';
 
     const router = useRouter();
+
+    const project = ref<project.Project>({
+        Name: '',
+        Description: '',
+        InitialDate: new Date(),
+        FinalDate: new Date(),
+        Status: true,
+        statusId: '',
+        members: [],
+    });
   
-    const project = ref({
+    /*const project = ref({
         name: '',
         description: '',
         start_date: new Date(),
@@ -118,7 +130,7 @@
         status: '',
         statusId: '',
         members: [],
-    });
+    });*/
 
     const status = ref([
         { name: 'Activo', statusId: '1' },
@@ -174,6 +186,17 @@
 
     function onCancel() {
         router.push({ path: `/projects` });
+    }
+
+    function save() {
+        //project.value.members = selectedEmployees.value.map((e) => e.id);
+        CreateProject(project.value)
+            .then(() => {
+                router.push({ path: `/projects` });
+            })
+            .catch((error) => {
+                console.error('Error creating project:', error);
+            });
     }
 </script>
   

@@ -19,14 +19,14 @@
                         <InputText
                             id="name"
                             type="text"
-                            v-model="project.name"
+                            v-model="project.Name"
                             placeholder="Nombre del proyecto"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
 
                         <label for="description" class="mt-3">Descripcion</label>
                         <Textarea
-                            v-model="project.description"
+                            v-model="project.Description"
                             id="description"
                             placeholder="Descripcion del proyecto"
                             rows="5"
@@ -37,7 +37,7 @@
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de inicio</label>
                         <Calendar
-                            v-model="project.start_date"
+                            v-model="project.InitialDate"
                             dateFormat="dd/mm/yy"
                             showIcon
                             iconDisplay="input"
@@ -47,7 +47,7 @@
 
                         <label for="end_date" class="mt-3">Fecha de finalización</label>
                         <Calendar
-                            v-model="project.end_date"
+                            v-model="project.FinalDate"
                             dateFormat="dd/mm/yy"
                             showIcon
                             iconDisplay="input"
@@ -114,7 +114,7 @@
 
 <script lang="ts" setup>
     import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-    import { ref, reactive } from 'vue';
+    import { onMounted, ref } from 'vue';
     import InputText from 'primevue/inputtext';
     import Textarea from 'primevue/textarea';
     import Dropdown from 'primevue/dropdown';
@@ -123,14 +123,18 @@
     import AutoComplete from 'primevue/autocomplete';
     import Toast from 'primevue/toast';
     import { useRouter } from 'vue-router';
+    import { GetProjectByID, UpdateProject } from '../../../wailsjs/go/desktop/ProjectHandler';
     import MultiSelect from 'primevue/multiselect';
     import { DeleteProject } from '../../../wailsjs/go/desktop/ProjectHandler';
     import { useToast } from 'primevue/usetoast';
+    import { project } from '../../../wailsjs/go/models';
 
     const router = useRouter();
     const toast = useToast();
+    const isLoading = ref(true);
 
-    const project = ref({
+    var project = ref<project.Project>({});
+    /*const project = ref({
         id: 1,
         name: 'Proyecto Alpha',
         description: 'Proyecto de desarrollo de software',
@@ -145,6 +149,21 @@
             { id: 4, name: 'María Chávez' },
             { id: 5, name: 'Carlos López' }
         ],
+    });*/
+
+    onMounted(async () => {
+        try {
+            const projectId = router.currentRoute.value.params.id;
+            const response = await GetProjectByID(parseInt(projectId));
+            project.value = response;
+            project.value.InitialDate = new Date(project.value.InitialDate);
+            project.value.FinalDate = new Date(project.value.FinalDate);
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los datos del proyecto', life: 2000 });
+        } finally {
+            isLoading.value = false;
+        }
     });
 
     const status = ref([

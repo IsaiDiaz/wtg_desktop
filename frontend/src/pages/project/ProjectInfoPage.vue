@@ -8,14 +8,14 @@
         </div>
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex">
-                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">{{ project.name }}</h2>
+                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">{{ project.Name }}</h2>
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid">
                     <div class="field col-12 md:col-6">
                         <label for="description">Descripcion</label>
                         <Textarea 
-                            v-model="project.description"
+                            v-model="project.Description"
                             id="description"
                             placeholder="Descripcion del proyecto" 
                             rows="8" 
@@ -26,13 +26,13 @@
                     </div>
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de inicio</label>
-                        <div class="card-yellow">{{ project.start_date }}</div>
+                        <div class="card-yellow">{{ project.InitialDate }}</div>
 
                         <label for="end_date" class="mt-2">Fecha de finalización</label>
-                        <div class="card-yellow">{{ project.end_date }}</div>
+                        <div class="card-yellow">{{ project.FinalDate }}</div>
 
                         <label for="status" class="mt-2">Estado</label>
-                        <div class="card-yellow">{{ project.status }}</div>
+                        <div class="card-yellow">{{ project.Status }}</div>
                     </div>
                 </div>
             </div>
@@ -53,17 +53,23 @@
   
 <script lang="ts" setup>
     import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-    import { ref, reactive } from 'vue';
+    import { onMounted, ref } from 'vue';
     import InputText from 'primevue/inputtext';
     import Textarea from 'primevue/textarea';
     import Dropdown from 'primevue/dropdown';
     import Calendar from 'primevue/calendar';
     import Button from 'primevue/button';
     import { useRouter } from 'vue-router';
+    import { GetProjectByID } from '../../../wailsjs/go/desktop/ProjectHandler';
+    import { project } from '../../../wailsjs/go/models';
+    import { useToast } from "primevue/usetoast";
 
     const router = useRouter();
-  
-    const project = ref({
+    const toast = useToast();
+    const isLoading = ref(true);
+
+    var project = ref<project.Project>({});
+    /*var project = ref({
         id: 1,
         name: 'Proyecto Alpha',
         description: 'Proyecto de desarrollo de software para la gestión de proyectos y tareas.',
@@ -78,6 +84,21 @@
             { id: 4, name: 'María Chávez' },
             { id: 5, name: 'Carlos López' }
         ],
+    });*/
+
+    onMounted(async () => {
+        try {
+            const projectId = router.currentRoute.value.params.id;
+            const response = await GetProjectByID(parseInt(projectId));
+            project.value = response;
+            project.value.InitialDate = new Date(project.value.InitialDate).toLocaleDateString('es-ES');
+            project.value.FinalDate = new Date(project.value.FinalDate).toLocaleDateString('es-ES');
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los datos del proyecto', life: 2000 });
+        } finally {
+            isLoading.value = false;
+        }
     });
 
     const status = ref([
