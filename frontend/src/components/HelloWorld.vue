@@ -6,14 +6,14 @@ import { employee } from '../../wailsjs/go/models'
 const {Employee} = employee
 
 const form = reactive({
-  name: "Juan Pérez",
-  ci: "12345678",
-  birth_date: new Date().toISOString(),
-  start_date: new Date().toISOString(),
-  photo_url: "https://placehold.co/200x200",
-  auth: 1,
-  category_id: 1,
-  email: "juan@example.com",
+  Name: "Juan Pérez",
+  CI: "12345678",
+  BirthDate: new Date().toISOString(),
+  StartDate: new Date().toISOString(),
+  PhotoURL: "https://placehold.co/200x200",
+  Auth: 1,
+  CategoryID: 1,
+  Email: "juan@example.com",
 })
 
 const message = reactive({
@@ -23,15 +23,15 @@ const message = reactive({
 async function create() {
   try {
     const emp = new Employee({
-      id: 0,
-      name: form.name,
-      ci: form.ci,
-      birth_date: form.birth_date,
-      start_date: form.start_date,
-      photo_url: form.photo_url,
-      auth: form.auth,
-      category_id: form.category_id,
-      email: form.email,
+      ID: 0,
+      Name: form.Name,
+      CI: form.CI,
+      BirthDate: form.BirthDate,
+      StartDate: form.StartDate,
+      PhotoURL: form.PhotoURL,
+      Auth: form.Auth,
+      CategoryID: form.CategoryID,
+      Email: form.Email,
     })
 
     await CreateEmployee(emp)
@@ -46,9 +46,9 @@ async function create() {
 <template>
   <main>
     <div id="form" class="input-box">
-      <input v-model="form.name" placeholder="Nombre" class="input" />
-      <input v-model="form.ci" placeholder="CI" class="input" />
-      <input v-model="form.email" placeholder="Email" class="input" />
+      <input v-model="form.Name" placeholder="Nombre" class="input" />
+      <input v-model="form.CI" placeholder="CI" class="input" />
+      <input v-model="form.Email" placeholder="Email" class="input" />
       <button class="btn" @click="create">Crear empleado</button>
     </div>
     <div class="result">{{ message.status }}</div>

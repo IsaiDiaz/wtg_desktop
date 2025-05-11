@@ -1,10 +1,11 @@
 <template>
+  <Toast/>
   <div class="card">
     <div class="flex justify-content-end align-items-center mb-2 font-bold">
       <!-- Botón Añadir Usuario -->
       <Button label="Añadir Usuario" icon="pi pi-plus" size="small"
         style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-        class="p-button-text mr-2 font-bold" 
+        class="p-button-text mr-2 font-bold"
         @click="goToUserCreatePage"/>
       <!-- Botón Eliminar -->
       <Button icon="pi pi-trash" severity="danger" style="background-color: var(--error-color);"
@@ -18,11 +19,16 @@
         <img src="../../assets/images/user-icon-white.svg" width="30"></img>
         Usuarios
       </div>
-      <DataTable v-model:selection="selectedUsers" :value="users" dataKey="id" @row-click="goToUserInfoPage">
+      <DataTable
+        v-model:selection="selectedUsers"
+        :value="users" dataKey="ID"
+        @row-click="goToUserInfoPage">
+        <template #empty> No se encontraron usuarios. </template>
+        <template #loading> Cargando usuarios... </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="ci" header="CI"></Column>
-        <Column field="name" header="Nombre"></Column>
-        <Column field="email" header="Correo electrónico"></Column>
+        <Column field="CI" header="CI"></Column>
+        <Column field="Name" header="Nombre"></Column>
+        <Column field="Email" header="Correo electrónico"></Column>
         <Column header="Rol">
           <template #body="slotProps">
             <Tag :value="slotProps.data.role"
@@ -57,10 +63,29 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button';
 import Tag from 'primevue/tag'
+import Toast from 'primevue/toast';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router'
+import { GetAllEmployees } from '../../../wailsjs/go/desktop/EmployeeHandler';
+import { employee } from '../../../wailsjs/go/models';
+import { useToast } from 'primevue';
+
+const toast = useToast();
+const isLoading = ref(true);
+
+onMounted(async () => {
+  try {
+    const response = await GetAllEmployees();
+    users.value = response;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los usuarios', life: 2000 });
+  } finally {
+    isLoading.value = false;
+  }
+});
 
 const isDialogVisible = ref(false);
-
 const showDialog = () => {
   isDialogVisible.value = true;
 };
@@ -69,51 +94,8 @@ const handleAccept = () => {
   console.log('Accepted!');
 
 };
-
 const router = useRouter()
-
-const users = ref([
-  {
-    id: 1,
-    ci: '12345678',
-    name: 'Juan Pérez',
-    email: 'juan.perez@example.com',
-    role: 'Administrador',
-    phone: '555-1234'
-  },
-  {
-    id: 2,
-    ci: '87654321',
-    name: 'María López',
-    email: 'maria.lopez@example.com',
-    role: 'Empleado',
-    phone: '555-5678'
-  },
-  {
-    id: 3,
-    ci: '11223344',
-    name: 'Carlos García',
-    email: 'carlos.garcia@example.com',
-    role: 'Auditor',
-    phone: '555-9101'
-  },
-  {
-    id: 4,
-    ci: '44332211',
-    name: 'Ana Torres',
-    email: 'ana.torres@example.com',
-    role: 'Empleado',
-    phone: '555-1213'
-  },
-  {
-    id: 5,
-    ci: '55667788',
-    name: 'Luis Martínez',
-    email: 'luis.martinez@example.com',
-    role: 'Administrador',
-    phone: '555-1415'
-  }
-]);
+var users = ref<employee.Employee[]>([]);
 const selectedUsers = ref();
 
 function goToUserInfoPage(event: any) {

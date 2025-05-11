@@ -1,10 +1,11 @@
 <template>
+  <Toast />
   <div class="card">
     <div class="flex justify-content-end align-items-center mb-2 font-bold">
       <!-- Botón Añadir proyecto -->
       <Button label="Añadir proyecto" icon="pi pi-plus" size="small"
         style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-        class="p-button-text mr-2 font-bold" />
+        class="p-button-text mr-2 font-bold" @click="goToProjectCreatePage" />
       <!-- Botón Eliminar -->
       <Button icon="pi pi-trash" severity="danger" style="background-color: var(--error-color);"
         size="small"
@@ -17,17 +18,30 @@
         <img src="../../assets/images/user-icon-white.svg" width="30"></img>
         Proyectos
       </div>
-      <DataTable v-model:selection="selectedProjects" :value="projects" dataKey="id" @row-click="goToProjectInfoPage">
+      <DataTable
+        v-model:selection="selectedProjects"
+        :value="projects" dataKey="ID"
+        :loading="isLoading"
+        @row-click="goToProjectInfoPage">
+        <template #empty> No se encontraron proyectos. </template>
+        <template #loading> Cargando proyectos... </template>
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="name" header="Nombre"></Column>
-        <Column field="description" header="Descripción"></Column>
-        <Column field="startDate" header="Fecha de inicio"></Column>
-        <Column field="endDate" header="Fecha de finalización"></Column>
+        <Column field="Name" header="Nombre"></Column>
+        <Column field="Description" header="Descripción"></Column>
+        <Column field="InitialDate" header="Fecha de inicio">
+          <template #body="slotProps">
+            {{ formatDate(slotProps.data.InitialDate) }}
+          </template>
+        </Column>
+        <Column field="FinalDate" header="Fecha de finalización">
+          <template #body="slotProps">
+            {{ formatDate(slotProps.data.FinalDate) }}
+          </template>
+        </Column>
         <Column header="Estado">
           <template #body="slotProps">
-            <Tag :value="slotProps.data.status"
-              :severity="slotProps.data.status === 'En pausa' ? 'warn' : slotProps.data.status === 'Finalizado' ?
-              'success' : slotProps.data.status === 'Cancelado' ? 'danger' : 'info'">
+            <Tag :value="slotProps.data.Status ? 'Activo' : 'Inactivo'"
+              :severity="slotProps.data.Status ? 'success' : 'danger'">
             </Tag>
           </template>
         </Column>
@@ -51,12 +65,31 @@
 
 <script lang="ts" setup>
 import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
+import Toast from 'primevue/toast';
 import { useRouter } from 'vue-router';
+import { GetAllProjects } from '../../../wailsjs/go/desktop/ProjectHandler';
+import { project } from '../../../wailsjs/go/models';
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+const isLoading = ref(true);
+
+onMounted(async () => {
+  try {
+    const response = await GetAllProjects();
+    projects.value = response;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los proyectos', life: 2000 });
+  } finally {
+    isLoading.value = false;
+  }
+});
 
 const isDialogVisible = ref(false);
 
@@ -70,54 +103,21 @@ const handleAccept = () => {
 
 const router = useRouter();
 
-const projects = ref([
-  {
-    id: 1,
-    name: 'Proyecto Alpha',
-    description: 'Desarrollo de una aplicación web',
-    startDate: '2023-01-15',
-    endDate: '2023-06-30',
-    status: 'En curso',
-  },
-  {
-    id: 2,
-    name: 'Proyecto Beta',
-    description: 'Implementación de un sistema ERP',
-    startDate: '2022-09-01',
-    endDate: '2023-03-15',
-    status: 'Finalizado',
-  },
-  {
-    id: 3,
-    name: 'Proyecto Gamma',
-    description: 'Migración de base de datos',
-    startDate: '2023-02-01',
-    endDate: '2023-08-01',
-    status: 'En pausa',
-  },
-  {
-    id: 4,
-    name: 'Proyecto Delta',
-    description: 'Auditoría de seguridad',
-    startDate: '2023-04-01',
-    endDate: '2023-09-30',
-    status: 'En curso',
-  },
-  {
-    id: 5,
-    name: 'Proyecto Epsilon',
-    description: 'Capacitación interna',
-    startDate: '2023-05-01',
-    endDate: '2023-07-15',
-    status: 'Cancelado',
-  },
-]);
+var projects = ref<project.Project[]>([]);
 
 const selectedProjects = ref();
 
 function goToProjectInfoPage(event: any) {
   const projectId = event.data.id;
   router.push({ path: `/projects/${projectId}` });
+}
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString('es-ES');
+}
+
+function goToProjectCreatePage(event: any) {
+  router.push({ path: `/projects/new` });
 }
 </script>
 

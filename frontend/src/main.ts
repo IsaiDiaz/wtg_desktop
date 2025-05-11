@@ -2,6 +2,7 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import './style.css';
 import { PrimeVue } from '@primevue/core';
+import ToastService from 'primevue/toastservice';
 import Aura from '@primeuix/themes/aura';
 import router from './routes/wtgRouter';
 import 'primeflex/primeflex.css';
@@ -17,4 +18,5 @@ app.use(PrimeVue, {
       }
   }
 });
+app.use(ToastService);
 app.mount('#app')
