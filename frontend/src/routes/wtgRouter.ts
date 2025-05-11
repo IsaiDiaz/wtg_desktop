@@ -6,6 +6,9 @@ import UserInfoPage from '../pages/user/UserInfoPage.vue'
 import UserEditPage from '../pages/user/UserEditPage.vue'
 import ProjectPage from '../pages/project/ProjectPage.vue'
 import ProjectCreatePage from '../pages/project/ProjectCreatePage.vue'
+import ProjectInfoPage from '../pages/project/ProjectInfoPage.vue'
+import ProjectEditPage from '../pages/project/ProjectEditPage.vue'
+
 
 const routes = [
   { path: '/', component: HelloWorld },
@@ -15,6 +18,8 @@ const routes = [
   { path: '/users/:id/edit', component: UserEditPage },
   { path: '/projects', component: ProjectPage },
   { path: '/project/new', component: ProjectCreatePage },
+  { path: '/project/:id', component: ProjectInfoPage },
+  { path: '/project/:id/edit', component: ProjectEditPage },
 ]
 
 const router = createRouter({
