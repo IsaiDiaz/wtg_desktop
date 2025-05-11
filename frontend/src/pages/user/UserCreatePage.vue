@@ -1,13 +1,9 @@
 <template>
     <div class="card relative">
-        <Button class="absolute" icon="pi pi-trash" severity="danger" 
-            style="right: 0; top: -4rem; background-color: var(--error-color);" 
-            @click="showDialogDelete" label="Eliminar" />
-        <img :src="user.profileImage" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;"/>
+        <img src="../../assets/images/user/user.png" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;"/>
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex">
-                <i class="pi pi-info-circle" style="font-size: 1.5rem; color: #9594A4;"></i>
-                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">Información del usuario</h2>
+                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">Crear usuario</h2>
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid mb-3">
@@ -90,7 +86,7 @@
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none; padding: 0.75rem;" />
+                            inputStyle="background-color: #fdfbdf; border: none;" />
 
                     </div>
                     <div class="field col-12 md:col-6">
@@ -102,52 +98,42 @@
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none; padding: 0.75rem;" />
+                            inputStyle="background-color: #fdfbdf; border: none;" />
                     </div>
                 </div>
             </div>
             <div class="flex justify-content-end">
+                <Button label="Cancelar" icon="pi pi-times-circle" class="p-button-text"
+                    severity="danger" @click="onCancel"/>
                 <Button label="Guardar" icon="pi pi-save" 
                     style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-                    class="p-button-text mr-2 font-bold" @click="showDialogEdit"/>
+                    class="p-button-text ml-4 mr-2 font-bold" @click="createUser"/>
             </div>
         </div>
     </div>
-
-    <!-- Dialog, eliminación -->
-    <ConfirmDialog :visible="isDialogDeleteVisible" :title="'Eliminación de usuario'"
-      :content="'Se enviará una solicitud al administrador del sistema para eliminar este usuario. El administrador revisará la solicitud y podrá aprobarla o rechazarla. Hasta que esto suceda, el usuario seguirá activo en el sistema. Te notificaremos cuando haya una respuesta.'"
-      :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAcceptDelete"
-      acceptIcon="pi pi-send"
-      @update:visible="isDialogDeleteVisible = $event" />
-    <!-- Dialog, actualización -->
-    <ConfirmDialog :visible="isDialogEditVisible" :title="'Actualización de información'"
-      :content="'Se enviará una solicitud al administrador del sistema para actualizar la información. Una vez revisada, el administrador podrá aprobar o rechazar la modificación. Hasta que esto suceda, los cambios no serán visibles. Te notificaremos cuando haya una respuesta.'"
-      :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAcceptEdit"
-      acceptIcon="pi pi-send"
-      @update:visible="isDialogEditVisible = $event" />
 </template>
   
 <script lang="ts" setup>
-    import ConfirmDialog from '../components/dialogs/ConfirmDialog.vue';
+    import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
     import { ref, reactive } from 'vue';
     import InputText from 'primevue/inputtext';
     import Dropdown from 'primevue/dropdown';
     import Calendar from 'primevue/calendar';
     import Button from 'primevue/button';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
   
     const user = ref({
-        id: 1,
-        profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
-        ci: '12345678',
-        name: 'Juan Luis',
-        lastname: 'Pérez Paredes',
-        email: 'juan.perez@example.com',
-        role: 'Administrador',
-        roleId: '1',
-        phone: '555-1234',
-        birth_date: new Date('1990-01-01T00:00:00'),
-        start_date: new Date('2020-01-01T00:00:00')
+        ci: '',
+        name: '',
+        lastname: '',
+        email: '',
+        role: '',
+        roleId: '',
+        phone: '',
+        birth_date: new Date(),
+        start_date: new Date()
     });
 
     const roles = ref([
@@ -156,21 +142,12 @@
         { name: 'Empleado', roleId: '3' }
     ]);
 
-    const isDialogDeleteVisible = ref(false);
-    const showDialogDelete = () => {
-        isDialogDeleteVisible.value = true;
-    };
-    const handleAcceptDelete = () => {
-        console.log('Accepted!');
-    };
+    function onCancel() {
+        router.push({ path: `/users` });
+    }
 
-    const isDialogEditVisible = ref(false);
-    const showDialogEdit = () => {
-        isDialogEditVisible.value = true;
-    };
-    const handleAcceptEdit = () => {
-        console.log('Accepted!');
-    };
+    function createUser() {
+    }
 </script>
   
 <style>

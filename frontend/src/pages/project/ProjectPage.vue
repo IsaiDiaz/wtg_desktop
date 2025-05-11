@@ -14,7 +14,7 @@
     <div class="p-3 bg-white border-round shadow-2" style="position: relative;">
       <div class="flex align-items-center justify-content-center gap-2 py-2 px-3 text-lg font-bold"
         style="position: absolute; top: -46px; left: 0px; background-color: #2A5C9F; color: white; border-top-left-radius: 20px; border-top-right-radius: 20px; ">
-        <img src="../assets/images/user-icon-white.svg" width="30"></img>
+        <img src="../../assets/images/user-icon-white.svg" width="30"></img>
         Proyectos
       </div>
       <DataTable v-model:selection="selectedProjects" :value="projects" dataKey="id" @row-click="goToProjectInfoPage">
@@ -50,7 +50,7 @@
 
 
 <script lang="ts" setup>
-import ConfirmDialog from '../components/dialogs/ConfirmDialog.vue';
+import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
 import { ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';

@@ -4,7 +4,8 @@
       <!-- Botón Añadir Usuario -->
       <Button label="Añadir Usuario" icon="pi pi-plus" size="small"
         style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-        class="p-button-text mr-2 font-bold" />
+        class="p-button-text mr-2 font-bold" 
+        @click="goToUserCreatePage"/>
       <!-- Botón Eliminar -->
       <Button icon="pi pi-trash" severity="danger" style="background-color: var(--error-color);"
         @click="showDialog"
@@ -14,7 +15,7 @@
     <div class="p-3 bg-white border-round shadow-2" style="position: relative;">
       <div class="flex align-items-center justify-content-center gap-2 py-2 px-3 text-lg font-bold"
         style="position: absolute; top: -46px; left: 0px; background-color: #2A5C9F; color: white; border-top-left-radius: 20px; border-top-right-radius: 20px; ">
-        <img src="../assets/images/user-icon-white.svg" width="30"></img>
+        <img src="../../assets/images/user-icon-white.svg" width="30"></img>
         Usuarios
       </div>
       <DataTable v-model:selection="selectedUsers" :value="users" dataKey="id" @row-click="goToUserInfoPage">
@@ -49,7 +50,7 @@
 
 
 <script lang="ts" setup>
-import ConfirmDialog from '../components/dialogs/ConfirmDialog.vue';
+import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
 import { ref, reactive } from 'vue'
 // import Sidebar from '../components/Sidebar.vue'
 import DataTable from 'primevue/datatable'
@@ -118,6 +119,10 @@ const selectedUsers = ref();
 function goToUserInfoPage(event: any) {
   const clientId = event.data.id;
   router.push({ path: `/users/${clientId}` });
+}
+
+function goToUserCreatePage(event: any) {
+  router.push({ path: `/users/new` });
 }
 </script>
 

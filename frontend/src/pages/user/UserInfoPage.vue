@@ -1,5 +1,9 @@
 <template>
     <div class="card relative">
+        <Button label="Editar" icon="pi pi-pencil"
+            style="right: 0; top: -4rem; background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
+            class="absolute p-button-text mr-2 font-bold"
+            @click="goToUserEditPage"/>
         <img :src="user.profileImage" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;" />
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex flex-wrap w-full">
@@ -69,7 +73,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none; padding: 0.75rem;"
+                inputStyle="background-color: #fdfbdf; border: none;"
             />
         </div>
         <div class="mt-3">
@@ -81,7 +85,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none; padding: 0.75rem;"
+                inputStyle="background-color: #fdfbdf; border: none;"
             />
         </div>
         
@@ -102,8 +106,10 @@
     import Dialog from 'primevue/dialog';
     import Button from 'primevue/button';
     import Password from 'primevue/password';
+    import { useRouter } from 'vue-router';
 
     const visible = ref(false);
+    const router = useRouter();
   
     const user = ref({
         id: 1,
@@ -117,6 +123,11 @@
         birth_date: '1990-01-01',
         start_date: '2020-01-01',
     });
+
+    function goToUserEditPage() {
+        const clientId = router.currentRoute.value.params.id;
+        router.push({ path: `/users/${clientId}/edit` });
+    }
 </script>
   
 <style>
