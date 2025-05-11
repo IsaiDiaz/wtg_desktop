@@ -109,7 +109,7 @@ var projects = ref<project.Project[]>([]);
 const selectedProjects = ref();
 
 function goToProjectInfoPage(event: any) {
-  const projectId = event.data.id;
+  const projectId = event.data.ID;
   router.push({ path: `/project/${projectId}` });
 }
 
