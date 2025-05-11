@@ -99,8 +99,8 @@ var users = ref<employee.Employee[]>([]);
 const selectedUsers = ref();
 
 function goToUserInfoPage(event: any) {
-  const clientId = event.data.id;
-  router.push({ path: `/users/${clientId}` });
+  const userId = event.data.ID;
+  router.push({ path: `/users/${userId}` });
 }
 
 function goToUserCreatePage(event: any) {

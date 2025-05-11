@@ -1,66 +1,54 @@
 <template>
-    <Toast/>
     <div class="card relative">
         <Button label="Editar" icon="pi pi-pencil"
             style="right: 0; top: -4rem; background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
             class="absolute p-button-text mr-2 font-bold" @click="goToUserEditPage" />
-        <img :src="user?.PhotoURL" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;" />
+        <img :src="user.profileImage" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;" />
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex flex-wrap w-full">
-                <i class="pi pi-info-circle mr-3" style="font-size: 1.5rem; color: #9594A4;"></i>
-                <h2 class="text-xl m-0" style="color: #9594A4;">
-                    Información de usuario
+                <h2 class="text-xl m-0 mr-3" style="color: #9594A4;">
+                    {{ user.name }}
                 </h2>
+                <div class="w-full flex justify-content-end sm:w-auto mt-2 sm:mt-0 border-round p-2 pt-1 pb-1 text-sm font-medium"
+                    style="color: white; background-color: #EFE627;">
+                    {{ user.role }}
+                </div>
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid mb-3">
                     <div class="field col-12 md:col-6">
                         <label>Carnet de identidad</label>
-                        <div class="card-yellow">{{ user?.CI }}</div>
+                        <div class="card-yellow">{{ user.ci }}</div>
                     </div>
-                    <div class="field col-12 md:col-6">
-                        <label>Rol</label>
-                        <div class="card-yellow">{{ user?.Auth }}</div>
-                    </div>
-                </div>
-                <div class="grid formgrid mb-3">
-                    <div class="field col-12 md:col-6">
-                        <label>Nombres</label>
-                        <div class="card-yellow">{{ user?.Name }}</div>
-                    </div>
-                    <div class="field col-12 md:col-6">
-                        <label>Apellidos</label>
-                        <div class="card-yellow">{{ user?.Name }}</div>
-                    </div>
-                </div>
-
-                <div class="grid formgrid mb-3">
                     <div class="field col-12 md:col-6">
                         <label>Teléfono</label>
-                        <div class="card-yellow">{{ user?.CI }}</div>
-                    </div>
-                    <div class="field col-12 md:col-6">
-                        <label>Correo electrónico</label>
-                        <div class="card-yellow">{{ user?.Email }}</div>
+                        <div class="card-yellow">{{ user.phone }}</div>
                     </div>
                 </div>
-
                 <div class="grid formgrid mb-3">
                     <div class="field col-12 md:col-6">
-                        <label>Fecha de nacimiento</label>
-                        <div class="card-yellow">{{ formatDate(user?.BirthDate) }}</div>
+                        <label>Correo electrónico</label>
+                        <div class="card-yellow">{{ user.email }}</div>
                     </div>
                     <div class="field col-12 md:col-6">
+                        <label>Fecha de nacimiento</label>
+                        <div class="card-yellow">{{ user.birth_date }}</div>
+                    </div>
+                </div>
+                <div class="grid formgrid mb-3">
+                    <div class="field col-12 md:col-6">
                         <label>Fecha de ingreso</label>
-                        <div class="card-yellow">{{ formatDate(user?.StartDate) }}</div>
+                        <div class="card-yellow">{{ user.start_date }}</div>
+                    </div>
+                    <div class="field col-12 md:col-6 flex">
+                        <button @click="visible = true" class="btn-password text-gray-400 hover:text-gray-600 mt-auto">
+                            <i class="pi pi-lock mr-1"></i>
+                            <span class="underline">Cambiar contraseña</span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-content-between align-items-center my-3">
-                <h2 class="text-xl m-0 mr-3" style="color: #9594A4;">Proyectos asociados</h2>
-                <Button label="Asignar nuevo proyecto" icon="pi pi-plus" size="small" severity="secondary"
-                    variant="outlined" rounded @click="goToUserEditPage" />
-            </div>
+            <h2 class="text-xl my-3" style="color: #9594A4;">Mis proyectos</h2>
             <DataTable :value="projects" dataKey="id">
                 <Column field="name" header="Nombre"></Column>
                 <Column field="startDate" header="Fecha de inicio"></Column>
@@ -70,13 +58,6 @@
                         <Tag :value="slotProps.data.status" :severity="slotProps.data.status === 'En pausa' ? 'warn' : slotProps.data.status === 'Finalizado' ?
                             'success' : slotProps.data.status === 'Cancelado' ? 'danger' : 'info'">
                         </Tag>
-                    </template>
-                </Column>
-                <Column header="">
-                    <!-- Botón, desvincular del proyecto -->
-                    <template #body="slotProps">
-                        <Button label="Desvincular del proyecto" icon="pi pi-link" size="small" severity="secondary"
-                            @click="removeProject(slotProps.data.id)" />
                     </template>
                 </Column>
             </DataTable>
@@ -132,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive } from 'vue';
 import { computed } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
@@ -140,43 +121,23 @@ import Password from 'primevue/password';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
-import Toast from 'primevue/toast';
 import { useRouter } from 'vue-router';
-import { employee } from '../../../wailsjs/go/models';
-import { GetEmployeeByID } from '../../../wailsjs/go/desktop/EmployeeHandler';
-import { useToast } from 'primevue';
 
 const visible = ref(false);
 const router = useRouter();
-const isLoading = ref(false);
-const toast = useToast();
-var user = ref<employee.Employee>();
 
-onMounted(async () => {
-    try {
-        const userId = router.currentRoute.value.params.id;
-        const response = await GetEmployeeByID(Number(userId));
-        user.value = response;
-    } catch (error) {
-        console.error('Error fetching user:', error);
-        toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo cargar la información del usuario', life: 2000 });
-    } finally {
-        isLoading.value = false;
-    }
+const user = ref({
+    id: 1,
+    profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
+    ci: '12345678',
+    name: 'Juan Luis Pérez Paredes',
+    email: 'juan.perez@example.com',
+    role: 'Administrador',
+    roleId: '1',
+    phone: '555-1234',
+    birth_date: '1990-01-01',
+    start_date: '2020-01-01',
 });
-
-// const user = ref({
-//     id: 1,
-//     profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
-//     ci: '12345678',
-//     name: 'Juan Luis Pérez Paredes',
-//     email: 'juan.perez@example.com',
-//     role: 'Administrador',
-//     roleId: '1',
-//     phone: '555-1234',
-//     birth_date: '1990-01-01',
-//     start_date: '2020-01-01',
-// });
 
 const projects = ref([
     {
@@ -222,19 +183,13 @@ const projects = ref([
 ]);
 
 function goToUserEditPage() {
-    const userId = router.currentRoute.value.params.id;
-    router.push({ path: `/users/${userId}/edit` });
+    const clientId = router.currentRoute.value.params.id;
+    router.push({ path: `/users/${clientId}/edit` });
 }
 
 function removeProject(projectId: number) {
     console.log(`Desvinculando el proyecto con ID: ${projectId}`);
 }
-
-function formatDate(date: string) {
-    return new Date(date).toLocaleDateString('es-ES');
-}
-
-
 </script>
 
 <style>
