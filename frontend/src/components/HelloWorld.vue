@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { CreateEmployee } from '../../wailsjs/go/desktop/EmployeeHandler'
+import { CreateEmployee, GetAllEmployees } from '../../wailsjs/go/desktop/EmployeeHandler'
 import { employee } from '../../wailsjs/go/models'
 
 const {Employee} = employee
@@ -23,7 +23,7 @@ const message = reactive({
 async function create() {
   try {
     const emp = new Employee({
-      id: 0, 
+      id: 0,
       name: form.name,
       ci: form.ci,
       birth_date: form.birth_date,
@@ -35,6 +35,7 @@ async function create() {
     })
 
     await CreateEmployee(emp)
+    console.log(await GetAllEmployees())
     message.status = "✅ Empleado creado exitosamente"
   } catch (error) {
     message.status = "❌ Error al crear: " + error

@@ -1,40 +1,41 @@
 <template>
   <div class="card">
     <div class="flex justify-content-end align-items-center mb-2 font-bold">
-      <!-- Botón Añadir Usuario -->
-      <Button label="Añadir Usuario" icon="pi pi-plus" size="small"
+      <!-- Botón Añadir proyecto -->
+      <Button label="Añadir proyecto" icon="pi pi-plus" size="small"
         style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
         class="p-button-text mr-2 font-bold" />
       <!-- Botón Eliminar -->
       <Button icon="pi pi-trash" severity="danger" style="background-color: var(--error-color);"
-        @click="showDialog"
         size="small"
+        @click="showDialog"
         aria-label="Eliminar" />
     </div>
     <div class="p-3 bg-white border-round shadow-2" style="position: relative;">
       <div class="flex align-items-center justify-content-center gap-2 py-2 px-3 text-lg font-bold"
         style="position: absolute; top: -46px; left: 0px; background-color: #2A5C9F; color: white; border-top-left-radius: 20px; border-top-right-radius: 20px; ">
         <img src="../assets/images/user-icon-white.svg" width="30"></img>
-        Usuarios
+        Proyectos
       </div>
-      <DataTable v-model:selection="selectedUsers" :value="users" dataKey="id" @row-click="goToUserInfoPage">
+      <DataTable v-model:selection="selectedProjects" :value="projects" dataKey="id" @row-click="goToProjectInfoPage">
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-        <Column field="ci" header="CI"></Column>
         <Column field="name" header="Nombre"></Column>
-        <Column field="email" header="Correo electrónico"></Column>
-        <Column header="Rol">
+        <Column field="description" header="Descripción"></Column>
+        <Column field="startDate" header="Fecha de inicio"></Column>
+        <Column field="endDate" header="Fecha de finalización"></Column>
+        <Column header="Estado">
           <template #body="slotProps">
-            <Tag :value="slotProps.data.role"
-              :severity="slotProps.data.role === 'Administrador' ? 'warn' : slotProps.data.role === 'Auditor' ? 'Success' : 'info'">
+            <Tag :value="slotProps.data.status"
+              :severity="slotProps.data.status === 'En pausa' ? 'warn' : slotProps.data.status === 'Finalizado' ?
+              'success' : slotProps.data.status === 'Cancelado' ? 'danger' : 'info'">
             </Tag>
           </template>
         </Column>
-        <Column field="phone" header="Teléfono"></Column>
       </DataTable>
     </div>
     <!-- Dialog, eliminación -->
-    <ConfirmDialog :visible="isDialogVisible" :title="'Eliminación de usuario'"
-      :content="'Se enviará una solicitud al administrador del sistema para eliminar este usuario. El administrador revisará la solicitud y podrá aprobarla o rechazarla. Hasta que esto suceda, el usuario seguirá activo en el sistema. Te notificaremos cuando haya una respuesta.'"
+    <ConfirmDialog :visible="isDialogVisible" :title="'Eliminación de Proyecto'"
+      :content="'Se enviará una solicitud al administrador del sistema para eliminar este Proyecto. El administrador revisará la solicitud y podrá aprobarla o rechazarla. Hasta que esto suceda, el Proyecto seguirá activo en el sistema. Te notificaremos cuando haya una respuesta.'"
       :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAccept"
       acceptIcon="pi pi-send"
       @update:visible="isDialogVisible = $event" />
@@ -50,13 +51,12 @@
 
 <script lang="ts" setup>
 import ConfirmDialog from '../components/dialogs/ConfirmDialog.vue';
-import { ref, reactive } from 'vue'
-// import Sidebar from '../components/Sidebar.vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+import { ref } from 'vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import Button from 'primevue/button';
-import Tag from 'primevue/tag'
-import { useRouter } from 'vue-router'
+import Tag from 'primevue/tag';
+import { useRouter } from 'vue-router';
 
 const isDialogVisible = ref(false);
 
@@ -66,60 +66,61 @@ const showDialog = () => {
 
 const handleAccept = () => {
   console.log('Accepted!');
-
 };
 
-const router = useRouter()
+const router = useRouter();
 
-const users = ref([
+const projects = ref([
   {
     id: 1,
-    ci: '12345678',
-    name: 'Juan Pérez',
-    email: 'juan.perez@example.com',
-    role: 'Administrador',
-    phone: '555-1234'
+    name: 'Proyecto Alpha',
+    description: 'Desarrollo de una aplicación web',
+    startDate: '2023-01-15',
+    endDate: '2023-06-30',
+    status: 'En curso',
   },
   {
     id: 2,
-    ci: '87654321',
-    name: 'María López',
-    email: 'maria.lopez@example.com',
-    role: 'Empleado',
-    phone: '555-5678'
+    name: 'Proyecto Beta',
+    description: 'Implementación de un sistema ERP',
+    startDate: '2022-09-01',
+    endDate: '2023-03-15',
+    status: 'Finalizado',
   },
   {
     id: 3,
-    ci: '11223344',
-    name: 'Carlos García',
-    email: 'carlos.garcia@example.com',
-    role: 'Auditor',
-    phone: '555-9101'
+    name: 'Proyecto Gamma',
+    description: 'Migración de base de datos',
+    startDate: '2023-02-01',
+    endDate: '2023-08-01',
+    status: 'En pausa',
   },
   {
     id: 4,
-    ci: '44332211',
-    name: 'Ana Torres',
-    email: 'ana.torres@example.com',
-    role: 'Empleado',
-    phone: '555-1213'
+    name: 'Proyecto Delta',
+    description: 'Auditoría de seguridad',
+    startDate: '2023-04-01',
+    endDate: '2023-09-30',
+    status: 'En curso',
   },
   {
     id: 5,
-    ci: '55667788',
-    name: 'Luis Martínez',
-    email: 'luis.martinez@example.com',
-    role: 'Administrador',
-    phone: '555-1415'
-  }
+    name: 'Proyecto Epsilon',
+    description: 'Capacitación interna',
+    startDate: '2023-05-01',
+    endDate: '2023-07-15',
+    status: 'Cancelado',
+  },
 ]);
-const selectedUsers = ref();
 
-function goToUserInfoPage(event: any) {
-  const clientId = event.data.id;
-  router.push({ path: `/users/${clientId}` });
+const selectedProjects = ref();
+
+function goToProjectInfoPage(event: any) {
+  const projectId = event.data.id;
+  router.push({ path: `/projects/${projectId}` });
 }
 </script>
+
 
 <style>
 .p-datatable-thead>tr>th {
