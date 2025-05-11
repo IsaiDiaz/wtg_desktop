@@ -4,7 +4,8 @@
       <!-- Botón Añadir proyecto -->
       <Button label="Añadir proyecto" icon="pi pi-plus" size="small"
         style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
-        class="p-button-text mr-2 font-bold" />
+        class="p-button-text mr-2 font-bold" 
+        @click="goToProjectCreatePage"/>
       <!-- Botón Eliminar -->
       <Button icon="pi pi-trash" severity="danger" style="background-color: var(--error-color);"
         size="small"
@@ -117,7 +118,11 @@ const selectedProjects = ref();
 
 function goToProjectInfoPage(event: any) {
   const projectId = event.data.id;
-  router.push({ path: `/projects/${projectId}` });
+  router.push({ path: `/project/${projectId}` });
+}
+
+function goToProjectCreatePage(event: any) {
+  router.push({ path: `/project/new` });
 }
 </script>
 

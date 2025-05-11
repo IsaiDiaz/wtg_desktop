@@ -6,8 +6,8 @@
         <img :src="user.profileImage" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;"/>
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex">
-                <i class="pi pi-info-circle" style="font-size: 1.5rem; color: #9594A4;"></i>
-                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">Información del usuario</h2>
+                <i class="pi pi-pencil" style="font-size: 1.5rem; color: #9594A4;"></i>
+                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">Editar usuario</h2>
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid mb-3">
