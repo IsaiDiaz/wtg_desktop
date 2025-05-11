@@ -1,7 +1,8 @@
 <template>
+    <Toast />
     <div class="card relative">
-        <Button class="absolute" icon="pi pi-trash" severity="danger" 
-            style="right: 0; top: -4rem; background-color: var(--error-color);" 
+        <Button class="absolute" icon="pi pi-trash" severity="danger"
+            style="right: 0; top: -4rem; background-color: var(--error-color);"
             @click="showDialogDelete" label="Eliminar" />
         <div class="ml-5 border-circle absolute w-12rem h-12rem flex align-items-center justify-content-center" style="top: -6rem; background-color: #F0F0F0;">
             <img src="../../assets/images/project/project.png" class="w-10rem h-10rem" />
@@ -24,44 +25,44 @@
                             style="background-color: #fdfbdf; border: none;" />
 
                         <label for="description" class="mt-3">Descripcion</label>
-                        <Textarea 
+                        <Textarea
                             v-model="project.description"
                             id="description"
-                            placeholder="Descripcion del proyecto" 
-                            rows="5" 
+                            placeholder="Descripcion del proyecto"
+                            rows="5"
                             cols="30"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none; resize: none;"/>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de inicio</label>
-                        <Calendar 
+                        <Calendar
                             v-model="project.start_date"
                             dateFormat="dd/mm/yy"
-                            showIcon 
+                            showIcon
                             iconDisplay="input"
                             inputId="start_date"
                             class="w-full"
                             inputStyle="background-color: #fdfbdf; border: none;" />
 
                         <label for="end_date" class="mt-3">Fecha de finalización</label>
-                        <Calendar 
+                        <Calendar
                             v-model="project.end_date"
                             dateFormat="dd/mm/yy"
-                            showIcon 
+                            showIcon
                             iconDisplay="input"
                             inputId="end_date"
                             class="w-full"
                             inputStyle="background-color: #fdfbdf; border: none;" />
 
                         <label for="status" class="mt-3">Estado</label>
-                        <Dropdown 
+                        <Dropdown
                             v-model="project.statusId"
-                            :options="status" 
-                            optionLabel="name" 
+                            :options="status"
+                            optionLabel="name"
                             optionValue="statusId"
                             placeholder="Seleciona el estado"
-                            class="w-full text-base" 
+                            class="w-full text-base"
                             style="background-color: #fdfbdf; border: none;" />
                     </div>
                 </div>
@@ -80,10 +81,10 @@
                 inputStyle="background-color: #fdfbdf; border: none; width: 100% !important;"/>
             <div class="col-12 md:col-10">
                 <div class="bg-gray-100 flex flex-wrap gap-2 mb-2 p-3 border-round" style="min-height: 62px;">
-                    <div v-for="employee in selectedEmployees" :key="employee.id" 
+                    <div v-for="employee in selectedEmployees" :key="employee.id"
                         class="text-base bg-gray-400 text-white flex border-round align-items-center justify-content-between p-1 pl-2">
                         {{ employee.name }}
-                        <i class="pi pi-times pl-2 pr-1" style="color: white; cursor: pointer;" 
+                        <i class="pi pi-times pl-2 pr-1" style="color: white; cursor: pointer;"
                             @click="removeEmployee(employee)"></i>
                     </div>
                 </div>
@@ -92,7 +93,7 @@
             <div class="flex justify-content-end">
                 <Button label="Cancelar" icon="pi pi-times-circle" class="p-button-text"
                     severity="danger" @click="onCancel"/>
-                <Button label="Guardar" icon="pi pi-save" 
+                <Button label="Guardar" icon="pi pi-save"
                     style="background-color: #EFE627; color: white; border-radius: 5px; font-weight: 700 !important;"
                     class="p-button-text ml-4 mr-2 font-bold" @click="showDialogEdit"/>
             </div>
@@ -110,7 +111,7 @@
         :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAcceptEdit"
         acceptIcon="pi pi-send" @update:visible="isDialogEditVisible = $event" />
 </template>
-  
+
 <script lang="ts" setup>
     import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
     import { ref, reactive } from 'vue';
@@ -119,12 +120,16 @@
     import Dropdown from 'primevue/dropdown';
     import Calendar from 'primevue/calendar';
     import Button from 'primevue/button';
+    import AutoComplete from 'primevue/autocomplete';
+    import Toast from 'primevue/toast';
     import { useRouter } from 'vue-router';
     import MultiSelect from 'primevue/multiselect';
-    import AutoComplete from 'primevue/autocomplete';
+    import { DeleteProject } from '../../../wailsjs/go/desktop/ProjectHandler';
+    import { useToast } from 'primevue/usetoast';
 
     const router = useRouter();
-  
+    const toast = useToast();
+
     const project = ref({
         id: 1,
         name: 'Proyecto Alpha',
@@ -198,8 +203,24 @@
     const showDialogDelete = () => {
         isDialogDeleteVisible.value = true;
     };
-    const handleAcceptDelete = () => {
-        console.log('Accepted!');
+
+    const handleAcceptDelete = async() => {
+        //TODO: En este caso, se eliminará el proyecto, cambiar más adelante
+        isDialogDeleteVisible.value = false;
+        try {
+            // throw new Error("");
+            const projectId = router.currentRoute.value.params.id;
+            console.log('ID del proyecto a eliminar:', projectId);
+            await DeleteProject(Number(projectId));
+            toast.add({ severity: 'success', summary: 'Proyecto eliminado', detail: 'El proyecto ha sido eliminado correctamente.', life: 2000 });
+            setTimeout(() => {
+                router.push({ path: `/projects` });
+            }, 2000);
+
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo eliminar el proyecto', life: 2000 });
+        }
     };
 
     const isDialogEditVisible = ref(false);
@@ -215,7 +236,7 @@
         router.push({ path: `/project/${projectId}` });
     }
 </script>
-  
+
 <style>
     label {
         font-size: 13px;
