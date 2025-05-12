@@ -3,7 +3,7 @@
         <Button class="absolute" icon="pi pi-trash" severity="danger" 
             style="right: 0; top: -4rem; background-color: var(--error-color);" 
             @click="showDialogDelete" label="Eliminar" />
-        <img :src="user.profileImage" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;"/>
+        <img :src="user.PhotoURL" class="ml-5 w-12rem h-12rem border-circle absolute" style="top: -6rem;"/>
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex">
                 <i class="pi pi-pencil" style="font-size: 1.5rem; color: #9594A4;"></i>
@@ -16,7 +16,7 @@
                         <InputText
                             id="ci"
                             type="text"
-                            v-model="user.ci"
+                            v-model="user.CI"
                             placeholder="Carnet de identidad"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -40,7 +40,7 @@
                         <InputText
                             id="name"
                             type="text"
-                            v-model="user.name"
+                            v-model="user.Name"
                             placeholder="Nombre"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -50,7 +50,7 @@
                         <InputText
                             id="lastname"
                             type="text"
-                            v-model="user.lastname"
+                            v-model="user.Name"
                             placeholder="Apellidos"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -63,7 +63,7 @@
                         <InputText
                             id="phone"
                             type="text"
-                            v-model="user.phone"
+                            v-model="user.CI"
                             placeholder="Teléfono"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -73,7 +73,7 @@
                         <InputText
                             id="email"
                             type="text"
-                            v-model="user.email"
+                            v-model="user.Email"
                             placeholder="Correo electrónico"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -84,7 +84,7 @@
                     <div class="field col-12 md:col-6">
                         <label for="birth_date">Fecha de nacimiento</label>
                         <Calendar 
-                            v-model="user.birth_date"
+                            v-model="user.BirthDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
@@ -96,7 +96,7 @@
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de ingreso</label>
                         <Calendar 
-                            v-model="user.start_date"
+                            v-model="user.StartDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
@@ -153,97 +153,141 @@
 </template>
 
 <script lang="ts" setup>
-import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-import { ref, reactive } from 'vue';
-import InputText from 'primevue/inputtext';
-import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
-import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
-import { useRouter } from 'vue-router';
+    import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
+    import { onMounted, ref, reactive } from 'vue';
+    import InputText from 'primevue/inputtext';
+    import Dropdown from 'primevue/dropdown';
+    import Calendar from 'primevue/calendar';
+    import Button from 'primevue/button';
+    import DataTable from 'primevue/datatable';
+    import Column from 'primevue/column';
+    import Tag from 'primevue/tag';
+    import { useRouter } from 'vue-router';
+    import { employee } from '../../../wailsjs/go/models';
+    import { GetEmployeeByID, UpdateEmployee, DeleteEmployee } from '../../../wailsjs/go/desktop/EmployeeHandler';
+    import { useToast } from 'primevue';
 
-const router = useRouter();
-
-const user = ref({
-    id: 1,
-    profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
-    ci: '12345678',
-    name: 'Juan Luis',
-    lastname: 'Pérez Paredes',
-    email: 'juan.perez@example.com',
-    role: 'Administrador',
-    roleId: '1',
-    phone: '555-1234',
-    birth_date: new Date('1990-01-01T00:00:00'),
-    start_date: new Date('2020-01-01T00:00:00')
-});
-
-const roles = ref([
-    { name: 'Administrador', roleId: '1' },
-    { name: 'Auditor', roleId: '2' },
-    { name: 'Empleado', roleId: '3' }
-]);
-
-const projects = ref([
-    {
+    const router = useRouter();
+    const isLoading = ref(true);
+    const toast = useToast();
+    var user = ref<employee.Employee>({});
+    /*const user = ref({
         id: 1,
-        name: 'Proyecto Alpha',
-        description: 'Desarrollo de una aplicación web',
-        startDate: '2023-01-15',
-        endDate: '2023-06-30',
-        status: 'En curso',
-    },
-    {
-        id: 2,
-        name: 'Proyecto Beta',
-        description: 'Implementación de un sistema ERP',
-        startDate: '2022-09-01',
-        endDate: '2023-03-15',
-        status: 'Finalizado',
-    },
-    {
-        id: 3,
-        name: 'Proyecto Gamma',
-        description: 'Migración de base de datos',
-        startDate: '2023-02-01',
-        endDate: '2023-08-01',
-        status: 'En pausa',
-    },
-    {
-        id: 4,
-        name: 'Proyecto Delta',
-        description: 'Auditoría de seguridad',
-        startDate: '2023-04-01',
-        endDate: '2023-09-30',
-        status: 'En curso',
-    },
-    {
-        id: 5,
-        name: 'Proyecto Epsilon',
-        description: 'Capacitación interna',
-        startDate: '2023-05-01',
-        endDate: '2023-07-15',
-        status: 'Cancelado',
-    },
-]);
+        profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
+        ci: '12345678',
+        name: 'Juan Luis',
+        lastname: 'Pérez Paredes',
+        email: 'juan.perez@example.com',
+        role: 'Administrador',
+        roleId: '1',
+        phone: '555-1234',
+        birth_date: new Date('1990-01-01T00:00:00'),
+        start_date: new Date('2020-01-01T00:00:00')
+    });*/
+    onMounted(async () => {
+        try {
+            const userId = router.currentRoute.value.params.id;
+            console.log('userId', userId);
+            const response = await GetEmployeeByID(Number(userId));
+            user.value = response;
+            user.value.BirthDate = new Date(user.value.BirthDate);
+            user.value.StartDate = new Date(user.value.StartDate);
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo cargar la información del usuario', life: 2000 });
+        } finally {
+            isLoading.value = false;
+        }
+    });
 
-const isDialogDeleteVisible = ref(false);
-const showDialogDelete = () => {
-    isDialogDeleteVisible.value = true;
-};
-const handleAcceptDelete = () => {
-    console.log('Accepted!');
-};
+    const roles = ref([
+        { name: 'Administrador', roleId: '1' },
+        { name: 'Auditor', roleId: '2' },
+        { name: 'Empleado', roleId: '3' }
+    ]);
 
-const isDialogEditVisible = ref(false);
-const showDialogEdit = () => {
-    isDialogEditVisible.value = true;
-};
-const handleAcceptEdit = () => {
-    console.log('Accepted!');
-};
+    const projects = ref([
+        {
+            id: 1,
+            name: 'Proyecto Alpha',
+            description: 'Desarrollo de una aplicación web',
+            startDate: '2023-01-15',
+            endDate: '2023-06-30',
+            status: 'En curso',
+        },
+        {
+            id: 2,
+            name: 'Proyecto Beta',
+            description: 'Implementación de un sistema ERP',
+            startDate: '2022-09-01',
+            endDate: '2023-03-15',
+            status: 'Finalizado',
+        },
+        {
+            id: 3,
+            name: 'Proyecto Gamma',
+            description: 'Migración de base de datos',
+            startDate: '2023-02-01',
+            endDate: '2023-08-01',
+            status: 'En pausa',
+        },
+        {
+            id: 4,
+            name: 'Proyecto Delta',
+            description: 'Auditoría de seguridad',
+            startDate: '2023-04-01',
+            endDate: '2023-09-30',
+            status: 'En curso',
+        },
+        {
+            id: 5,
+            name: 'Proyecto Epsilon',
+            description: 'Capacitación interna',
+            startDate: '2023-05-01',
+            endDate: '2023-07-15',
+            status: 'Cancelado',
+        },
+    ]);
+
+    const isDialogDeleteVisible = ref(false);
+    const showDialogDelete = () => {
+        isDialogDeleteVisible.value = true;
+    };
+    const handleAcceptDelete = async() => {
+        isDialogDeleteVisible.value = false;
+        try {
+            const userId = router.currentRoute.value.params.id;
+            console.log('ID del empleado a eliminar:', userId);
+            await DeleteEmployee(Number(userId));
+            toast.add({ severity: 'success', summary: 'Empleado eliminado', detail: 'El empleado ha sido eliminado correctamente.', life: 2000 });
+            setTimeout(() => {
+                router.push({ path: `/users` });
+            }, 2000);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo eliminar al empleado', life: 2000 });
+        }
+    };
+
+    const isDialogEditVisible = ref(false);
+    const showDialogEdit = () => {
+        isDialogEditVisible.value = true;
+    };
+    const handleAcceptEdit = async() => {
+        isDialogEditVisible.value = false;
+        try {
+            const userId = router.currentRoute.value.params.id;
+            console.log('ID del empleado a editar:', userId);
+            await UpdateEmployee(user.value);
+            toast.add({ severity: 'success', summary: 'Información actualizada', detail: 'La información del empleado ha sido actualizada correctamente.', life: 2000 });
+            setTimeout(() => {
+                router.push({ path: `/users` });
+            }, 2000);
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo actualizar la información del empleado', life: 2000 });
+        }
+    };
 
 function onCancel() {
     const clientId = router.currentRoute.value.params.id;

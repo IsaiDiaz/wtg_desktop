@@ -223,6 +223,7 @@ const projects = ref([
 
 function goToUserEditPage() {
     const userId = router.currentRoute.value.params.id;
+    console.log(`ID del usuario: ${userId}`);
     router.push({ path: `/users/${userId}/edit` });
 }
 

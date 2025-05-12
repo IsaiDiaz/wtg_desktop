@@ -246,8 +246,20 @@
     const showDialogEdit = () => {
         isDialogEditVisible.value = true;
     };
-    const handleAcceptEdit = () => {
-        console.log('Accepted!');
+    const handleAcceptEdit = async() => {
+        isDialogEditVisible.value = false;
+        try {
+            const projectId = router.currentRoute.value.params.id;
+            console.log('ID del proyecto a editar:', projectId);
+            UpdateProject(project.value);
+            toast.add({ severity: 'success', summary: 'Proyecto editado', detail: 'El proyecto ha sido editado correctamente.', life: 2000 });
+            setTimeout(() => {
+                router.push({ path: `/project/${projectId}` });
+            }, 2000);
+        } catch (error) {
+            console.error('Error editing project:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo editar el proyecto', life: 2000 });
+        }
     };
 
     function onCancel() {
