@@ -14,7 +14,7 @@ type Employee struct {
 	Auth       int       `gorm:"column:ca_employee_auth;not null"`
 	CategoryID int       `gorm:"column:ca_category_id;not null"`
 	Email      string    `gorm:"column:ca_employee_email;size:50;not null"`
-	Phone      string    `gorm:"column:ca_employee_phone;size:50;not null"`
+	Phone      string    `gorm:"column:ca_employee_phone;size:50"`
 }
 
 func (Employee) TableName() string {
