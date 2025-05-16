@@ -38,6 +38,7 @@ func main() {
 			container.RFIDCardHandler,
 			container.RFIDCardHistoryHandler,
 			container.ProjectHandler,
+			container.ProjectEmployeeHandler,
 		},
 	})
 

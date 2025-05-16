@@ -6,6 +6,7 @@ import (
 	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
 	"wtg_desktop/internal/domain/project"
+	"wtg_desktop/internal/domain/projectemployee"
 	"wtg_desktop/internal/domain/rfidcard"
 	"wtg_desktop/internal/domain/rfidcardhistory"
 
@@ -43,6 +44,7 @@ func SetupDatabase() *gorm.DB {
 		&rfidcard.RfidCard{},
 		&rfidcardhistory.RfidCardHistory{},
 		&project.Project{},
+		&projectemployee.ProjectEmployee{},
 	)
 
 	return db
