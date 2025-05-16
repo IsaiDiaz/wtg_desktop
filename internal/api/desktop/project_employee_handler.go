@@ -1,8 +1,6 @@
 package desktop
 
-import (
-	"wtg_desktop/internal/domain/projectemployee"
-)
+import "wtg_desktop/internal/domain/projectemployee"
 
 type ProjectEmployeeHandler struct {
 	service projectemployee.Service
@@ -30,4 +28,12 @@ func (p *ProjectEmployeeHandler) UpdateProjectEmployee(pe *projectemployee.Proje
 
 func (p *ProjectEmployeeHandler) DeleteProjectEmployee(id int) error {
 	return p.service.DeleteProjectEmployee(id)
+}
+
+func (p *ProjectEmployeeHandler) GetProjectEmployeesByProjectID(projectID int) ([]*projectemployee.ProjectEmployee, error) {
+	return p.service.GetProjectEmployeesByProjectID(projectID)
+}
+
+func (p *ProjectEmployeeHandler) GetProjectEmployeesByEmployeeID(employeeID int) ([]*projectemployee.ProjectEmployee, error) {
+	return p.service.GetProjectEmployeesByEmployeeID(employeeID)
 }

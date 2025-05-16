@@ -54,6 +54,7 @@ export namespace employee {
 	    Auth: number;
 	    CategoryID: number;
 	    Email: string;
+	    Phone: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Employee(source);
@@ -70,6 +71,7 @@ export namespace employee {
 	        this.Auth = source["Auth"];
 	        this.CategoryID = source["CategoryID"];
 	        this.Email = source["Email"];
+	        this.Phone = source["Phone"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -138,6 +140,31 @@ export namespace project {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace projectemployee {
+	
+	export class ProjectEmployee {
+	    ID: number;
+	    ProjectID: number;
+	    EmployeeID: number;
+	    CurrentCategoryID: number;
+	    Status: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ProjectEmployee(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.ProjectID = source["ProjectID"];
+	        this.EmployeeID = source["EmployeeID"];
+	        this.CurrentCategoryID = source["CurrentCategoryID"];
+	        this.Status = source["Status"];
+	    }
 	}
 
 }
