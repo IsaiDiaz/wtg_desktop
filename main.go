@@ -2,18 +2,30 @@ package main
 
 import (
 	"embed"
+	"log"
+
+	"github.com/joho/godotenv"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 
+	"wtg_desktop/internal/api/server"
 	"wtg_desktop/internal/bootstrap"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No se pudo cargar .env, se usarán valores por defecto")
+	}
+}
+
 func main() {
+	server.InitServer()
 	db := SetupDatabase()
 
 	container := bootstrap.InitAppContainer(db)
