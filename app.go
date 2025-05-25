@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"wtg_desktop/internal/domain/auth"
 	"wtg_desktop/internal/domain/category"
 	"wtg_desktop/internal/domain/device"
 	"wtg_desktop/internal/domain/employee"
@@ -45,6 +46,11 @@ func SetupDatabase() *gorm.DB {
 		&rfidcardhistory.RfidCardHistory{},
 		&project.Project{},
 		&projectemployee.ProjectEmployee{},
+		&auth.AuthUser{},
+		&auth.AuthUserRole{},
+		&auth.AuthRole{},
+		&auth.AuthRolePermission{},
+		&auth.AuthPermission{},
 	)
 
 	return db
