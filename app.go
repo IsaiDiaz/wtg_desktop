@@ -2,17 +2,6 @@ package main
 
 import (
 	"context"
-	"wtg_desktop/internal/domain/auth"
-	"wtg_desktop/internal/domain/category"
-	"wtg_desktop/internal/domain/device"
-	"wtg_desktop/internal/domain/employee"
-	"wtg_desktop/internal/domain/project"
-	"wtg_desktop/internal/domain/projectemployee"
-	"wtg_desktop/internal/domain/rfidcard"
-	"wtg_desktop/internal/domain/rfidcardhistory"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 // App struct
@@ -29,29 +18,4 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-}
-
-func SetupDatabase() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("./internal/db/wtg.db"), &gorm.Config{})
-
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	db.AutoMigrate(
-		&employee.Employee{},
-		&category.Category{},
-		&device.Device{},
-		&rfidcard.RfidCard{},
-		&rfidcardhistory.RfidCardHistory{},
-		&project.Project{},
-		&projectemployee.ProjectEmployee{},
-		&auth.AuthUser{},
-		&auth.AuthUserRole{},
-		&auth.AuthRole{},
-		&auth.AuthRolePermission{},
-		&auth.AuthPermission{},
-	)
-
-	return db
 }

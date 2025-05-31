@@ -12,6 +12,7 @@ import (
 
 	"wtg_desktop/internal/api/server"
 	"wtg_desktop/internal/bootstrap"
+	"wtg_desktop/internal/db"
 )
 
 //go:embed all:frontend/dist
@@ -26,7 +27,7 @@ func init() {
 
 func main() {
 	server.InitServer()
-	db := SetupDatabase()
+	db := db.SetupDatabase()
 
 	container := bootstrap.InitAppContainer(db)
 	// Create an instance of the app structure
