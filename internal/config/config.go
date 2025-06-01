@@ -14,3 +14,7 @@ func GetEnv(key, fallback string) string {
 func GetServerPort() string {
 	return GetEnv("SERVER_PORT", "8080")
 }
+
+func GetEnvironment() string {
+	return GetEnv("APP_ENV", "development")
+}

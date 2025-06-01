@@ -9,8 +9,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 
-	"wtg_desktop/internal/api/server"
-	"wtg_desktop/internal/bootstrap"
+	"wtg_desktop/internal/app"
+	"wtg_desktop/internal/bootstrap/desktop"
 	"wtg_desktop/internal/config"
 	"wtg_desktop/internal/db"
 	"wtg_desktop/internal/logger"
@@ -28,16 +28,23 @@ func init() {
 
 func main() {
 
-	environment := config.GetEnv("ENVIRONMENT", "DEVELOPMENT")
-	logger.Init(environment == "DEVELOPMENT")
+	environment := config.GetEnvironment()
+	logger.Init(environment == "development")
 	defer logger.Sync()
 
 	logger.Info("Initializing application...")
 
-	server.InitServer()
 	db := db.SetupDatabase()
 
-	container := bootstrap.InitAppContainer(db)
+	container := desktop.InitAppContainer(db)
+	webServer := app.StartWebApp(db)
+
+	go func() {
+		if err := webServer.Run(":" + config.GetServerPort()); err != nil {
+			logger.Fatal(err)
+		}
+	}()
+
 	// Create an instance of the app structure
 	app := NewApp()
 
@@ -51,16 +58,7 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
-		Bind: []interface{}{
-			app,
-			container.EmployeeHandler,
-			container.CategoryHandler,
-			container.DeviceHandler,
-			container.RFIDCardHandler,
-			container.RFIDCardHistoryHandler,
-			container.ProjectHandler,
-			container.ProjectEmployeeHandler,
-		},
+		Bind:             append([]interface{}{app}, container.AllHandlers()...),
 	})
 
 	if err != nil {

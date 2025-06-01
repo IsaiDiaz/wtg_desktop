@@ -1,4 +1,4 @@
-package bootstrap
+package desktop
 
 import (
 	"wtg_desktop/internal/api/desktop"

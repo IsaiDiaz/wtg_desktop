@@ -1,6 +1,8 @@
-package bootstrap
+package desktop
 
 import (
+	"reflect"
+
 	"gorm.io/gorm"
 
 	"wtg_desktop/internal/api/desktop"
@@ -14,6 +16,19 @@ type AppContainer struct {
 	RFIDCardHistoryHandler *desktop.RfidCardHistoryHandler
 	ProjectHandler         *desktop.ProjectHandler
 	ProjectEmployeeHandler *desktop.ProjectEmployeeHandler
+}
+
+func (c *AppContainer) AllHandlers() []interface{} {
+	var handlers []interface{}
+	val := reflect.ValueOf(c).Elem() // Desreferencia el puntero *AppContainer
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		if field.Kind() == reflect.Ptr && !field.IsNil() {
+			handlers = append(handlers, field.Interface())
+		}
+	}
+	return handlers
 }
 
 func InitAppContainer(db *gorm.DB) *AppContainer {
