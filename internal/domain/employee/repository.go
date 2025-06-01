@@ -43,9 +43,5 @@ func (r *repository) Update(employee *Employee) error {
 }
 
 func (r *repository) Delete(id int) error {
-	var employee Employee
-	if err := r.db.First(&employee, id).Error; err != nil {
-		return err
-	}
-	return r.db.Delete(&employee).Error
+	return r.db.Delete(&Employee{}, id).Error
 }
