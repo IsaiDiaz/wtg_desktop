@@ -18,3 +18,11 @@ func GetServerPort() string {
 func GetEnvironment() string {
 	return GetEnv("APP_ENV", "development")
 }
+
+func GetJwtSecret() string {
+	return GetEnv("JWT_SECRET", "")
+}
+
+func GetJwtRefreshSecret() string {
+	return GetEnv("JWT_REFRESH_SECRET", "")
+}
