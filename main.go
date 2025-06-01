@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"log"
 
 	"github.com/joho/godotenv"
 
@@ -12,7 +11,9 @@ import (
 
 	"wtg_desktop/internal/api/server"
 	"wtg_desktop/internal/bootstrap"
+	"wtg_desktop/internal/config"
 	"wtg_desktop/internal/db"
+	"wtg_desktop/internal/logger"
 )
 
 //go:embed all:frontend/dist
@@ -21,11 +22,18 @@ var assets embed.FS
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("No se pudo cargar .env, se usarán valores por defecto")
+		logger.Info("Could not load .env file; using default values")
 	}
 }
 
 func main() {
+
+	environment := config.GetEnv("ENVIRONMENT", "DEVELOPMENT")
+	logger.Init(environment == "DEVELOPMENT")
+	defer logger.Sync()
+
+	logger.Info("Initializing application...")
+
 	server.InitServer()
 	db := db.SetupDatabase()
 

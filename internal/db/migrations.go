@@ -15,7 +15,7 @@ import (
 )
 
 func SetupDatabase() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("./wtg_db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("./internal/db/wtg.db"), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")
