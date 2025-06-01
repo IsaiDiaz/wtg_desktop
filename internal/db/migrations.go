@@ -40,5 +40,7 @@ func SetupDatabase() *gorm.DB {
 		panic("migration failed: " + err.Error())
 	}
 
+	Seed(db)
+
 	return db
 }
