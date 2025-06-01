@@ -12,8 +12,7 @@ func StartWebApp(db *gorm.DB) *gin.Engine {
 	api := router.Group("/api")
 
 	container := web.InitAppContainer(db)
-
-	container.AuthHandler.RegisterRoutes(api)
+	container.RegisterAllRoutes(api)
 
 	return router
 }

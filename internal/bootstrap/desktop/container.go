@@ -20,7 +20,7 @@ type AppContainer struct {
 
 func (c *AppContainer) AllHandlers() []interface{} {
 	var handlers []interface{}
-	val := reflect.ValueOf(c).Elem() // Desreferencia el puntero *AppContainer
+	val := reflect.ValueOf(c).Elem()
 
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
