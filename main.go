@@ -13,6 +13,7 @@ import (
 	"wtg_desktop/internal/bootstrap/desktop"
 	"wtg_desktop/internal/config"
 	"wtg_desktop/internal/db"
+	"wtg_desktop/internal/discovery"
 	"wtg_desktop/internal/logger"
 )
 
@@ -40,13 +41,18 @@ func main() {
 	webServer := app.StartWebApp(db)
 
 	go func() {
-		if err := webServer.Run(":" + config.GetServerPort()); err != nil {
+		serverPort := config.GetServerPort()
+		logger.Info("Starting Gin web server on :%s", serverPort)
+		if err := webServer.Run(":" + serverPort); err != nil {
 			logger.Fatal(err)
 		}
 	}()
 
+	discoveryService := discovery.NewDiscoveryService()
+	discoveryService.Start()
+
 	// Create an instance of the app structure
-	app := NewApp()
+	app := NewApp(discoveryService)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -58,6 +64,7 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
+		OnShutdown:       app.shutdown,
 		Bind:             append([]interface{}{app}, container.AllHandlers()...),
 	})
 

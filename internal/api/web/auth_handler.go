@@ -26,7 +26,7 @@ func (h *AuthHandler) RegisterRoutes(rg *gin.RouterGroup) {
 	authGroup.GET("/:id", h.GetUserByID)
 	authGroup.PUT("/:id", h.UpdateUser)
 	authGroup.DELETE("/:id", h.DeleteUser)
-	// authGroup.POST("/:id/roles", h.AssignRole)
+
 	authGroup.POST("/refresh", h.RefreshToken)
 }
 
@@ -110,31 +110,6 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		"refresh_token": refreshToken,
 	})
 }
-
-// // POST /auth/users/:id/roles
-// func (h *AuthHandler) AssignRole(c *gin.Context) {
-// 	idStr := c.Param("id")
-// 	userID, err := strconv.Atoi(idStr)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-// 		return
-// 	}
-
-// 	var input struct {
-// 		RoleID int `json:"role_id" binding:"required"`
-// 	}
-// 	if err := c.ShouldBindJSON(&input); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	if err := h.service.AssignRole(userID, input.RoleID); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	c.Status(http.StatusOK)
-// }
 
 // GET /auth/users/:id
 func (h *AuthHandler) GetUserByID(c *gin.Context) {
