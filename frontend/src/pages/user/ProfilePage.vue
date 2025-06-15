@@ -85,7 +85,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none;"
+                :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }"
             />
         </div>
         <div class="mt-3">
@@ -97,7 +97,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none;"
+                :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }"
             />
         </div>
 

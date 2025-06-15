@@ -24,10 +24,10 @@
                     <div class="field col-12 md:col-6">
                         <label for="rol">Rol</label>
                         <Dropdown 
-                            v-model="user.roleId" 
+                            v-model="user.Auth" 
                             :options="roles" 
                             optionLabel="name" 
-                            optionValue="roleId"
+                            optionValue="Auth"
                             placeholder="Seleciona el rol" 
                             class="w-full text-base" 
                             style="background-color: #fdfbdf; border: none;" />    
@@ -63,7 +63,7 @@
                         <InputText
                             id="phone"
                             type="text"
-                            v-model="user.CI"
+                            v-model="user.Phone"
                             placeholder="Teléfono"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -90,8 +90,7 @@
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none;" />
-
+                            :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }" />
                     </div>
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de ingreso</label>
@@ -102,14 +101,12 @@
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none;" />
+                            :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }" />
                     </div>
                 </div>
             </div>
             <div class="flex justify-content-between align-items-center my-3">
                 <h2 class="text-xl m-0 mr-3" style="color: #9594A4;">Proyectos asociados</h2>
-                <Button label="Asignar nuevo proyecto" icon="pi pi-plus" size="small" severity="secondary"
-                    variant="outlined" rounded @click="goToUserEditPage" />
             </div>
             <DataTable :value="projects" dataKey="id">
                 <Column field="name" header="Nombre"></Column>
@@ -117,8 +114,8 @@
                 <Column field="endDate" header="Fecha de finalización"></Column>
                 <Column header="Estado">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.status" :severity="slotProps.data.status === 'En pausa' ? 'warn' : slotProps.data.status === 'Finalizado' ?
-                            'success' : slotProps.data.status === 'Cancelado' ? 'danger' : 'info'">
+                        <Tag :value="slotProps.data.status" :severity="slotProps.data.status ? 'success': 'warn'" class="w-full text-center">
+                            {{ slotProps.data.status ? 'Activo' : 'Inactivo' }}
                         </Tag>
                     </template>
                 </Column>
@@ -154,44 +151,68 @@
 
 <script lang="ts" setup>
     import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-    import { onMounted, ref, reactive } from 'vue';
+    import { onMounted, ref } from 'vue';
     import InputText from 'primevue/inputtext';
     import Dropdown from 'primevue/dropdown';
     import Calendar from 'primevue/calendar';
-    import Button from 'primevue/button';
     import DataTable from 'primevue/datatable';
+    import Button from 'primevue/button';
     import Column from 'primevue/column';
     import Tag from 'primevue/tag';
-    import { useRouter } from 'vue-router';
-    import { employee } from '../../../wailsjs/go/models';
-    import { GetEmployeeByID, UpdateEmployee, DeleteEmployee } from '../../../wailsjs/go/desktop/EmployeeHandler';
     import { useToast } from 'primevue';
+    import { useRouter } from 'vue-router';
+    
+    import { GetEmployeeByID, UpdateEmployee, DeleteEmployee } from '../../../wailsjs/go/desktop/EmployeeHandler';
+    import { GetProjectEmployeesByEmployeeID, DeleteProjectEmployee } from '../../../wailsjs/go/desktop/ProjectEmployeeHandler';
+    import { GetProjectByID } from '../../../wailsjs/go/desktop/ProjectHandler';
+    import { employee, project, projectemployee } from '../../../wailsjs/go/models';
 
+    const toast = useToast();
     const router = useRouter();
     const isLoading = ref(true);
-    const toast = useToast();
-    var user = ref<employee.Employee>({});
-    /*const user = ref({
-        id: 1,
-        profileImage: 'https://image.tmdb.org/t/p/w235_and_h235_face/xKs4zD0ze9aw3KtLZdzFxLYmVAu.jpg',
-        ci: '12345678',
-        name: 'Juan Luis',
-        lastname: 'Pérez Paredes',
-        email: 'juan.perez@example.com',
-        role: 'Administrador',
-        roleId: '1',
-        phone: '555-1234',
-        birth_date: new Date('1990-01-01T00:00:00'),
-        start_date: new Date('2020-01-01T00:00:00')
-    });*/
+
+    var user = ref<employee.Employee>({
+        ID: 0,
+        Name: '',
+        CI: '',
+        Email: '',
+        Phone: '',
+        PhotoURL: '',
+        BirthDate: new Date(),
+        StartDate: new Date(),
+        Auth: 1,
+        CategoryID: 1,
+        convertValues: (a: any) => a 
+    });
+    var projectsEmployee = ref<projectemployee.ProjectEmployee[]>([]);
+    var projects = ref<project.Project[]>([]);
+
     onMounted(async () => {
         try {
+            // Get the user by ID from the route parameters
             const userId = router.currentRoute.value.params.id;
             console.log('userId', userId);
             const response = await GetEmployeeByID(Number(userId));
             user.value = response;
             user.value.BirthDate = new Date(user.value.BirthDate);
             user.value.StartDate = new Date(user.value.StartDate);
+            if(user.value.PhotoURL == '') {
+                user.value.PhotoURL = '../../assets/images/user/user.png';
+            }
+
+            // Get projects associated with the user
+            const projectsEmp = await GetProjectEmployeesByEmployeeID(Number(userId));
+            projectsEmployee.value = projectsEmp;
+            if (projectsEmployee && projectsEmployee.value.length > 0) {
+                for (const project of projectsEmployee.value) {
+                    const projectDetails = await GetProjectByID(project.ID);
+                    if (projectDetails) {
+                        projects.value.push(projectDetails);
+                    }
+                }
+            } else {
+                projects.value = [];
+            }
         } catch (error) {
             console.error('Error fetching user:', error);
             toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo cargar la información del usuario', life: 2000 });
@@ -200,53 +221,10 @@
         }
     });
 
-    const roles = ref([
-        { name: 'Administrador', roleId: '1' },
-        { name: 'Auditor', roleId: '2' },
-        { name: 'Empleado', roleId: '3' }
-    ]);
-
-    const projects = ref([
-        {
-            id: 1,
-            name: 'Proyecto Alpha',
-            description: 'Desarrollo de una aplicación web',
-            startDate: '2023-01-15',
-            endDate: '2023-06-30',
-            status: 'En curso',
-        },
-        {
-            id: 2,
-            name: 'Proyecto Beta',
-            description: 'Implementación de un sistema ERP',
-            startDate: '2022-09-01',
-            endDate: '2023-03-15',
-            status: 'Finalizado',
-        },
-        {
-            id: 3,
-            name: 'Proyecto Gamma',
-            description: 'Migración de base de datos',
-            startDate: '2023-02-01',
-            endDate: '2023-08-01',
-            status: 'En pausa',
-        },
-        {
-            id: 4,
-            name: 'Proyecto Delta',
-            description: 'Auditoría de seguridad',
-            startDate: '2023-04-01',
-            endDate: '2023-09-30',
-            status: 'En curso',
-        },
-        {
-            id: 5,
-            name: 'Proyecto Epsilon',
-            description: 'Capacitación interna',
-            startDate: '2023-05-01',
-            endDate: '2023-07-15',
-            status: 'Cancelado',
-        },
+    const roles = ref([ // TODO : obtener los roles desde la API
+        { name: 'Administrador', Auth: 1 },
+        { name: 'Auditor', Auth: 2 },
+        { name: 'Empleado', Auth: 3 }
     ]);
 
     const isDialogDeleteVisible = ref(false);
@@ -289,10 +267,28 @@
         }
     };
 
-function onCancel() {
-    const clientId = router.currentRoute.value.params.id;
-    router.push({ path: `/users/${clientId}` });
-}
+    function onCancel() {
+        const clientId = router.currentRoute.value.params.id;
+        router.push({ path: `/users/${clientId}` });
+    }
+
+    async function removeProject(projectId: number) {
+        // Obtener de projectsEmployee
+        const projectEmployeeID = projectsEmployee.value.find(pe => pe.ID === projectId)?.ID;
+        if (!projectEmployeeID) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'No se encontró el proyecto asociado.', life: 2000 });
+            return;
+        }
+        try {
+            await DeleteProjectEmployee(projectEmployeeID);
+            projects.value = projects.value.filter(p => p.ID !== projectId);
+            projectsEmployee.value = projectsEmployee.value.filter(pe => pe.ID !== projectEmployeeID);
+            toast.add({severity: 'success', summary: 'Proyecto desvinculado', detail: 'El proyecto ha sido desvinculado correctamente.', life: 2000 });
+        } catch (error) {
+            console.error('Error removing project:', error);
+            toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudo desvincular el proyecto', life: 2000 });
+        }
+    }
 </script>
 
 <style>

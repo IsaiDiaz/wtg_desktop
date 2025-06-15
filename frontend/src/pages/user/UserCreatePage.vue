@@ -13,7 +13,7 @@
                         <InputText
                             id="ci"
                             type="text"
-                            v-model="user.ci"
+                            v-model="user.CI"
                             placeholder="Carnet de identidad"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -21,10 +21,10 @@
                     <div class="field col-12 md:col-6">
                         <label for="rol">Rol</label>
                         <Dropdown 
-                            v-model="user.roleId" 
+                            v-model="user.Auth" 
                             :options="roles" 
                             optionLabel="name" 
-                            optionValue="roleId"
+                            optionValue="Auth"
                             placeholder="Selecciona el rol"
                             class="w-full text-base"
                             style="background-color: #fdfbdf; border: none;" />
@@ -37,20 +37,20 @@
                         <InputText
                             id="name"
                             type="text"
-                            v-model="user.name"
+                            v-model="user.Name"
                             placeholder="Nombre"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
                     </div>
                     <div class="field col-12 md:col-6">
-                        <label for="lastname">Apellidos</label>
-                        <InputText
+                        <label for="lastname">Apellidos (falta el campo en BD)</label>
+                        <!--<InputText
                             id="lastname"
                             type="text"
-                            v-model="user.lastname"
+                            v-model="user.LastName"
                             placeholder="Apellidos"
                             class="w-full"
-                            style="background-color: #fdfbdf; border: none;" />
+                            style="background-color: #fdfbdf; border: none;" />-->
                     </div>
                 </div>
 
@@ -60,7 +60,7 @@
                         <InputText
                             id="phone"
                             type="text"
-                            v-model="user.phone"
+                            v-model="user.Phone"
                             placeholder="Teléfono"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -70,7 +70,7 @@
                         <InputText
                             id="email"
                             type="text"
-                            v-model="user.email"
+                            v-model="user.Email"
                             placeholder="Correo electrónico"
                             class="w-full"
                             style="background-color: #fdfbdf; border: none;" />
@@ -81,25 +81,25 @@
                     <div class="field col-12 md:col-6">
                         <label for="birth_date">Fecha de nacimiento</label>
                         <Calendar
-                            v-model="user.birth_date"
+                            v-model="user.BirthDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none;" />
+                            :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }" />
 
                     </div>
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de ingreso</label>
                         <Calendar 
-                            v-model="user.start_date"
+                            v-model="user.StartDate"
                             dateFormat="dd/mm/yy"
                             showIcon 
                             iconDisplay="input"
                             inputId="birth_date"
                             class="w-full"
-                            inputStyle="background-color: #fdfbdf; border: none;" />
+                            :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }" />
                     </div>
                 </div>
             </div>
@@ -139,62 +139,72 @@
 </template>
 
 <script lang="ts" setup>
-import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-import { ref, reactive } from 'vue';
-import InputText from 'primevue/inputtext';
-import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
-import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
-import { useRouter } from 'vue-router';
+    import { ref } from 'vue';
+    import InputText from 'primevue/inputtext';
+    import Dropdown from 'primevue/dropdown';
+    import Calendar from 'primevue/calendar';
+    import Button from 'primevue/button';
+    import Column from 'primevue/column';
+    import Tag from 'primevue/tag';
+    import DataTable from 'primevue/datatable';
+    import { useRouter } from 'vue-router';
 
-const router = useRouter();
+    import { CreateEmployee } from '../../../wailsjs/go/desktop/EmployeeHandler';
+    import { employee } from '../../../wailsjs/go/models';
 
-const user = ref({
-    ci: '',
-    name: '',
-    lastname: '',
-    email: '',
-    role: '',
-    roleId: '',
-    phone: '',
-    birth_date: new Date(),
-    start_date: new Date()
-});
+    const router = useRouter();
 
-const roles = ref([
-    { name: 'Administrador', roleId: '1' },
-    { name: 'Auditor', roleId: '2' },
-    { name: 'Empleado', roleId: '3' }
-]);
+    const user = ref<employee.Employee>({
+        ID: 0,
+        Name: '',
+        CI: '',
+        BirthDate: new Date(),
+        StartDate: new Date(),
+        PhotoURL: '../../assets/images/user/user.png',
+        Auth: 3,
+        CategoryID: 0,
+        Email: '',
+        Phone: '',
+        convertValues: () => {}
+    });
 
-const projects = ref([
-    {
-        id: 1,
-        name: 'Proyecto Alpha',
-        description: 'Desarrollo de una aplicación web',
-        startDate: '2023-01-15',
-        endDate: '2023-06-30',
-        status: 'En curso',
-    },
-]);
+    const roles = ref([
+        { name: 'Administrador', Auth: 1 },
+        { name: 'Auditor', Auth: 2 },
+        { name: 'Empleado', Auth: 3 }
+    ]);
 
-function onCancel() {
-    router.push({ path: `/users` });
-}
+    const projects = ref([
+        {
+            id: 1,
+            name: 'Proyecto Alpha',
+            description: 'Desarrollo de una aplicación web',
+            startDate: '2023-01-15',
+            endDate: '2023-06-30',
+            status: 'En curso',
+        },
+    ]);
 
-function createUser() {
-}
+    function onCancel() {
+        router.push({ path: `/users` });
+    }
 
-function addProject() {
-    // Logic to add a new project
-}
+    async function createUser() {
+        try {
+            await CreateEmployee(user.value);
+            router.push({ path: `/users` });
+        } catch (error) {
+            console.error('Error creating user:', error);
+        }
+    }
 
-function removeProject(projectId: number) {
-    // Logic to remove a project
-}
+    function addProject() {
+        // Logic to add a new project
+    }
+
+    function removeProject(projectId: number) {
+        // Logic to remove a project
+    }
 </script>
 
 <style>

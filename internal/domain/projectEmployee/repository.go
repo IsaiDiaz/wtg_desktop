@@ -54,7 +54,7 @@ func (r *repository) Delete(id int) error {
 
 func (r *repository) GetByProjectID(projectID int) ([]*ProjectEmployee, error) {
 	var projectEmployees []*ProjectEmployee
-	if err := r.db.Where("project_id = ?", projectID).Find(&projectEmployees).Error; err != nil {
+	if err := r.db.Where("ca_project_id = ?", projectID).Find(&projectEmployees).Error; err != nil {
 		return nil, err
 	}
 	return projectEmployees, nil
@@ -62,7 +62,7 @@ func (r *repository) GetByProjectID(projectID int) ([]*ProjectEmployee, error) {
 
 func (r *repository) GetByEmployeeID(employeeID int) ([]*ProjectEmployee, error) {
 	var projectEmployees []*ProjectEmployee
-	if err := r.db.Where("employee_id = ?", employeeID).Find(&projectEmployees).Error; err != nil {
+	if err := r.db.Where("ca_employee_id = ?", employeeID).Find(&projectEmployees).Error; err != nil {
 		return nil, err
 	}
 	return projectEmployees, nil

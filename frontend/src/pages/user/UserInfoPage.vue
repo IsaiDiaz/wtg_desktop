@@ -37,7 +37,7 @@
                 <div class="grid formgrid mb-3">
                     <div class="field col-12 md:col-6">
                         <label>Teléfono</label>
-                        <div class="card-yellow">{{ user?.CI }}</div>
+                        <div class="card-yellow">{{ user?.Phone }}</div>
                     </div>
                     <div class="field col-12 md:col-6">
                         <label>Correo electrónico</label>
@@ -104,7 +104,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none;"
+                :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }"
             />
         </div>
         <div class="mt-3">
@@ -116,7 +116,7 @@
                 autocomplete="current-password"
                 class="w-full"
                 inputClass="w-full"
-                inputStyle="background-color: #fdfbdf; border: none;"
+                :inputStyle="{ backgroundColor: '#fdfbdf', border: 'none' }"
             />
         </div>
 

@@ -6,6 +6,10 @@ import (
 
 var log *zap.SugaredLogger
 
+func init() {
+	Init(true)
+}
+
 func Init(isDebug bool) {
 	var logger *zap.Logger
 	var err error

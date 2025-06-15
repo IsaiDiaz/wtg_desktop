@@ -54,89 +54,81 @@
       :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAccept"
       acceptIcon="pi pi-send"
       @update:visible="isDialogVisible = $event" />
-    <!-- Dialog, actualización -->
-    <!-- <ConfirmDialog :visible="isDialogVisible" :title="'Actualización de información'"
-      :content="'Se enviará una solicitud al administrador del sistema para actualizar la información. Una vez revisada, el administrador podrá aprobar o rechazar la modificación. Hasta que esto suceda, los cambios no serán visibles. Te notificaremos cuando haya una respuesta.'"
-      :severity="'warn'" :cancelText="'Cancelar'" :acceptText="'Enviar solicitud'" :onAcceptAction="handleAccept"
-      acceptIcon="pi pi-send"
-      @update:visible="isDialogVisible = $event" /> -->
   </div>
 </template>
 
 
 <script lang="ts" setup>
-import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
-import { onMounted, ref } from 'vue';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
-import Tag from 'primevue/tag';
-import Toast from 'primevue/toast';
-import { useRouter } from 'vue-router';
-import { GetAllProjects } from '../../../wailsjs/go/desktop/ProjectHandler';
-import { project } from '../../../wailsjs/go/models';
-import { useToast } from "primevue/usetoast";
+  import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
+  import { onMounted, ref } from 'vue';
+  import DataTable from 'primevue/datatable';
+  import Column from 'primevue/column';
+  import Button from 'primevue/button';
+  import Tag from 'primevue/tag';
+  import Toast from 'primevue/toast';
+  import { useRouter } from 'vue-router';
+  import { GetAllProjects } from '../../../wailsjs/go/desktop/ProjectHandler';
+  import { project } from '../../../wailsjs/go/models';
+  import { useToast } from "primevue/usetoast";
 
-const toast = useToast();
-const isLoading = ref(true);
+  const toast = useToast();
+  const isLoading = ref(true);
 
-onMounted(async () => {
-  try {
-    const response = await GetAllProjects();
-    projects.value = response;
-  } catch (error) {
-    console.error('Error fetching projects:', error);
-    toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los proyectos', life: 2000 });
-  } finally {
-    isLoading.value = false;
+  onMounted(async () => {
+    try {
+      const response = await GetAllProjects();
+      projects.value = response;
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los proyectos', life: 2000 });
+    } finally {
+      isLoading.value = false;
+    }
+  });
+
+  const isDialogVisible = ref(false);
+
+  const showDialog = () => {
+    isDialogVisible.value = true;
+  };
+
+  const handleAccept = () => {
+    console.log('Accepted!');
+  };
+
+  const router = useRouter();
+
+  var projects = ref<project.Project[]>([]);
+
+  const selectedProjects = ref();
+
+  function goToProjectInfoPage(event: any) {
+    const id = event.data.ID;
+    router.push({ path: `/project/${id}` });
   }
-});
 
-const isDialogVisible = ref(false);
+  function goToProjectCreatePage(event: any) {
+    router.push({ path: `/project/new` });
+  }
 
-const showDialog = () => {
-  isDialogVisible.value = true;
-};
-
-const handleAccept = () => {
-  console.log('Accepted!');
-};
-
-const router = useRouter();
-
-var projects = ref<project.Project[]>([]);
-
-const selectedProjects = ref();
-
-function goToProjectInfoPage(event: any) {
-  const projectId = event.data.ID;
-  router.push({ path: `/project/${projectId}` });
-}
-
-function goToProjectCreatePage(event: any) {
-  router.push({ path: `/project/new` });
-}
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('es-ES');
-}
+  function formatDate(date: string) {
+    return new Date(date).toLocaleDateString('es-ES');
+  }
 
 </script>
-
-
 <style>
-.p-datatable-thead>tr>th {
-  background-color: #F5F4F9;
-  color: #9594A4;
-  font-weight: bold;
-  font-size: 16px;
-}
+  .p-datatable-thead>tr>th {
+    background-color: #F5F4F9;
+    color: #9594A4;
+    font-weight: bold;
+    font-size: 16px;
+  }
 
-.p-datatable-thead>tr:first-child>th:first-child {
-  border-top-left-radius: 30px;
-}
+  .p-datatable-thead>tr:first-child>th:first-child {
+    border-top-left-radius: 30px;
+  }
 
-.p-datatable-thead>tr:first-child>th:last-child {
-  border-top-right-radius: 30px;
-}
+  .p-datatable-thead>tr:first-child>th:last-child {
+    border-top-right-radius: 30px;
+  }
 </style>

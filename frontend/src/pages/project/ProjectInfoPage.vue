@@ -8,14 +8,14 @@
         </div>
         <div class="p-6 bg-white border-round shadow-2" style="margin-top: 7rem; padding-top: 7.5rem !important;">
             <div class="flex">
-                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">{{ project.Name }}</h2>
+                <h2 class="text-xl m-0 ml-2" style="color: #9594A4;">{{ projectRegister.Name }}</h2>
             </div>
             <div class="col-12 md:col-10 mt-2">
                 <div class="grid formgrid">
                     <div class="field col-12 md:col-6">
                         <label for="description">Descripcion</label>
                         <Textarea 
-                            v-model="project.Description"
+                            v-model="projectRegister.Description"
                             id="description"
                             placeholder="Descripcion del proyecto" 
                             rows="8" 
@@ -26,13 +26,15 @@
                     </div>
                     <div class="field col-12 md:col-6">
                         <label for="start_date">Fecha de inicio</label>
-                        <div class="card-yellow">{{ project.InitialDate }}</div>
+                        <div class="card-yellow">{{ projectRegister.InitialDate }}</div>
 
                         <label for="end_date" class="mt-2">Fecha de finalización</label>
-                        <div class="card-yellow">{{ project.FinalDate }}</div>
+                        <div class="card-yellow">{{ projectRegister.FinalDate }}</div>
 
                         <label for="status" class="mt-2">Estado</label>
-                        <div class="card-yellow">{{ project.Status }}</div>
+                        <div class="card-yellow">
+                            {{ projectRegister.Status ? 'Activo' : 'Inactivo' }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -41,9 +43,9 @@
             </div>
             <div class="col-12 md:col-10">
                 <div class="bg-gray-100 flex flex-wrap gap-2 mb-2 p-3 border-round" style="min-height: 62px;">
-                    <div v-for="employee in selectedEmployees" :key="employee.id" 
+                    <div v-for="employee in selectedEmployees" :key="employee.ID" 
                         class="text-base bg-gray-400 text-white flex border-round align-items-center justify-content-between p-1 pl-2 pr-2">
-                        {{ employee.name }}
+                        {{ employee.Name }}
                     </div>
                 </div>
             </div>
@@ -52,47 +54,56 @@
 </template>
   
 <script lang="ts" setup>
-    import ConfirmDialog from '../../components/dialogs/ConfirmDialog.vue';
     import { onMounted, ref } from 'vue';
-    import InputText from 'primevue/inputtext';
     import Textarea from 'primevue/textarea';
-    import Dropdown from 'primevue/dropdown';
-    import Calendar from 'primevue/calendar';
     import Button from 'primevue/button';
     import { useRouter } from 'vue-router';
-    import { GetProjectByID } from '../../../wailsjs/go/desktop/ProjectHandler';
-    import { project } from '../../../wailsjs/go/models';
     import { useToast } from "primevue/usetoast";
 
+    import { GetProjectByID } from '../../../wailsjs/go/desktop/ProjectHandler';
+    import { GetEmployeeByID } from '../../../wailsjs/go/desktop/EmployeeHandler';
+    import { GetProjectEmployeesByProjectID } from '../../../wailsjs/go/desktop/ProjectEmployeeHandler';
+    import { project, employee } from '../../../wailsjs/go/models';
+    
     const router = useRouter();
     const toast = useToast();
     const isLoading = ref(true);
 
-    var project = ref<project.Project>({});
-    /*var project = ref({
-        id: 1,
-        name: 'Proyecto Alpha',
-        description: 'Proyecto de desarrollo de software para la gestión de proyectos y tareas.',
-        start_date: '2020-01-01',
-        end_date: '2026-01-01',
-        status: 'Activo',
-        statusId: '1',
-        members: [
-            { id: 1, name: 'Juan Perez Lopez' },
-            { id: 2, name: 'Micaela Gordillo Alcocer' },
-            { id: 3, name: 'Luis Fernández' },
-            { id: 4, name: 'María Chávez' },
-            { id: 5, name: 'Carlos López' }
-        ],
-    });*/
+    var projectRegister = ref<project.Project>({
+        ID: 0,
+        Name: '',
+        InitialDate: undefined,
+        IsCurrent: false,
+        Status: false,
+        Description: '',
+        convertValues: function (a: any, classs: any, asMap?: boolean) {
+            throw new Error('Function not implemented.');
+        }
+    });
+
+    var selectedEmployees = ref<employee.Employee[]>([]);
 
     onMounted(async () => {
         try {
-            const projectId = router.currentRoute.value.params.id;
-            const response = await GetProjectByID(parseInt(projectId));
-            project.value = response;
-            project.value.InitialDate = new Date(project.value.InitialDate).toLocaleDateString('es-ES');
-            project.value.FinalDate = new Date(project.value.FinalDate).toLocaleDateString('es-ES');
+            // Get the project by ID
+            var id = router.currentRoute.value.params.id;
+            const response = await GetProjectByID(Number(id));
+            projectRegister.value = response;
+            projectRegister.value.InitialDate = new Date(projectRegister.value.InitialDate).toLocaleDateString('es-ES');
+            projectRegister.value.FinalDate = new Date(projectRegister.value.FinalDate).toLocaleDateString('es-ES');
+            
+            // Get the employees associated with the project
+            const employees = await GetProjectEmployeesByProjectID(Number(id));
+            if (employees && employees.length > 0) {
+                for (const emp of employees) {
+                    const employeeData = await GetEmployeeByID(Number(emp.EmployeeID));
+                    if (employeeData) {
+                        selectedEmployees.value.push(employeeData);
+                    }
+                }
+            } else {
+                selectedEmployees.value = [];
+            }
         } catch (error) {
             console.error('Error fetching projects:', error);
             toast.add({ severity: 'error', summary: 'Ups! Ocurrió un error', detail: 'No se pudieron cargar los datos del proyecto', life: 2000 });
@@ -100,15 +111,6 @@
             isLoading.value = false;
         }
     });
-
-    const status = ref([
-        { name: 'Activo', statusId: '1' },
-        { name: 'Inactivo', statusId: '2' },
-        { name: 'Finalizado', statusId: '3' },
-        { name: 'Cancelado', statusId: '4' }
-    ]);
-
-    const selectedEmployees = ref(project.value.members);
 
     function onCancel() {
         router.push({ path: `/projects` });
